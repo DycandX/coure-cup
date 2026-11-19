@@ -2,6 +2,8 @@
 
 Daftar ini **bukan** task sprint (lihat [sprint/README.md](sprint/README.md)). Isinya hal yang perlu dikonfirmasi atau diputuskan orang lain sebelum atau sesudah sprint berjalan. Diperbarui 2026-11-19.
 
+Daftar pertanyaan siap kirim, lengkap dengan contoh jawaban dan perbandingan esai vs web: `deliverables/Pertanyaan_untuk_Tim_CUORE.md` (lokal, `deliverables/` di-ignore git).
+
 ## Dr. Enny (klinis)
 
 - [x] Ambang TD, pinggang, gula puasa, dan TD opsional untuk modul S: dikonfirmasi 2026-11-19 (`DECISIONS.md` D-005). Pinggang pria diubah ke 90 cm.
