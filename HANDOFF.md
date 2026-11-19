@@ -5,7 +5,7 @@ status: "prototype"
 updated: "2026-11-19"
 author_harness: "claude-code"
 author_model: "Claude Sonnet 5.5"
-based_on: "commit awal (docs: add handoff kit and .gitignore); kode aplikasi belum di-commit"
+based_on: "4f9fbad (docs: update handoff, decisions D-002/D-003 and commands)"
 ---
 # Handoff: web-coure-atina (CUORE Web)
 
@@ -15,7 +15,7 @@ based_on: "commit awal (docs: add handoff kit and .gitignore); kode aplikasi bel
 
 | | |
 | :--- | :--- |
-| **Pohon kerja** | ada perubahan belum di-commit: seluruh aplikasi Next.js (`src/`, config, `package.json`), `AGENTS.md`, `DECISIONS.md`. Commit awal sudah di-push ke `origin/main` (DycandX/coure-cup). `docs/` dan `COURE-CUP/` ada di `.gitignore` |
+| **Pohon kerja** | bersih; 7 commit sudah di-push ke `origin/main` (DycandX/coure-cup). `docs/`, `COURE-CUP/`, dan `deliverables/` ada di `.gitignore` |
 | **Test** | ✅ 2026-11-19: `npm run test:run` 70 lulus; `tsc`, `eslint`, `npm run build` bersih; `node scripts/e2e-check.mjs` 19/19 lulus di tiga ukuran (HP 390x780, tablet 768x1024, desktop 1440x900; `VIEWPORT=WxH`) |
 | **Pemilik** | `atina` / tim CUORE (5th IYC 2026, Diponegoro University). Bahasa percakapan: Indonesia. Kode, nama, dan pesan commit: Inggris |
 
@@ -24,7 +24,7 @@ based_on: "commit awal (docs: add handoff kit and .gitignore); kode aplikasi bel
 ## 0. Mulai di sini (60 detik)
 
 - **Tujuan projek:** Membangun ulang website **CUORE** (bubur instan gurih modular: 35 g Universal Base + 20 g modul S/L/M) agar terasa seperti aplikasi (*app-like*, mobile-first, transisi halus), dilengkapi wizard skrining *rule-based* on-device dan halaman QR per modul (`/cup/s`, `/cup/m`, `/cup/l`).
-- **Status sekarang:** Aplikasi Next.js berjalan dengan alur QR-first (`/cup/s|m|l` langsung membuka skrining; `D-003`), bahasa bawaan Inggris, tata letak responsif (HP/tablet/desktop), mode demo, QR stiker di `deliverables/qr/`. Kode belum di-commit. **`cuorecup.vercel.app/cup/s` masih 404** karena versi baru belum di-deploy. Repo referensi `COURE-CUP` sudah di-clone ke `COURE-CUP/` (berisi halaman statis `index.html` dan mockup Streamlit `app.py`), sementara dokumen brief dan esai ilmiah sudah dikonversi ke Markdown di `docs/`.
+- **Status sekarang:** Aplikasi Next.js berjalan dengan alur QR-first (`/cup/s|m|l` langsung membuka skrining; `D-003`), bahasa bawaan Inggris, tata letak responsif (HP/tablet/desktop), mode demo, QR stiker di `deliverables/qr/`. Kode sudah di-commit dan di-push. **`cuorecup.vercel.app/cup/s` masih 404** karena versi baru belum di-deploy. Repo referensi `COURE-CUP` sudah di-clone ke `COURE-CUP/` (berisi halaman statis `index.html` dan mockup Streamlit `app.py`), sementara dokumen brief dan esai ilmiah sudah dikonversi ke Markdown di `docs/`.
 - **Sedang dikerjakan:** Tidak ada. Menunggu: deploy oleh pemilik Vercel, konfirmasi dr. Enny atas ambang (`D-002`, `D-003`), pengecekan label kemasan sebelum QR dicetak. Tenggat 18 Nov 2026 sudah lewat menurut tanggal 2026-11-19; tahap berikutnya belum diketahui.
 - **Langkah pertama yang disarankan:** Lihat bagian 5 (tinjau dan commit kode, tinjauan klinisi atas `D-002`, uji aksesibilitas, aset resmi).
 - **Jangan lakukan:** Jangan menulis klaim medis/menyembuhkan/menurunkan kolesterol/mencegah penyakit, jangan menyebut S-CUP paling rendah natrium (L & M = 8 mg vs S = 17 mg), jangan menghilangkan label **estimasi** pada angka gizi, dan jangan mengirim data skrining ke server.
@@ -98,7 +98,7 @@ Masalah yang diketahui:
 
 | # | Langkah | Berkas utama | Selesai bila |
 | :---: | :--- | :--- | :--- |
-| 1 | Pemilik meninjau dan commit kode aplikasi (belum di-commit) | semua berkas baru | Commit `feat(...)` per area atas izin pemilik |
+| 1 | Hubungkan repo ke project Vercel baru (domain `cuore-cup.vercel.app`, akun pribadi pemilik, lewat plugin Vercel/MCP) | n/a | Deploy produksi hijau |
 | 2 | Deploy ke project Vercel baru milik pemilik (nama/domain, akun, dan sumber deploy masih ditanyakan; belum ada yang dibuat), lalu buat ulang QR dengan domain final dan uji `https://cuorecup.vercel.app/cup/s|m|l` di HP (data seluler) | n/a | Ketiga URL membuka skrining (bukan 404) |
 | 3 | dr. Enny mengonfirmasi ambang (`D-002`, `D-003`), tekanan darah opsional, dan teks edukasi/manfaat | `safety.ts`, `scoring.ts`, `copy.ts`, `products.ts` | Angka dan teks final; test diperbarui |
 | 4 | Cek label kemasan (typo, alergen kedelai, label L-CUP, nilai gizi berlabel estimasi), baru cetak QR | `deliverables/qr/` | Tim menyatakan label aman |
@@ -139,8 +139,8 @@ Keputusan lengkap dicatat di [DECISIONS.md](DECISIONS.md). `D-001` dan `D-003` B
 
 | Tanggal | Agent / model | Dikerjakan | Commit |
 | :--- | :--- | :--- | :--- |
-| 2026-11-19 | claude-code / Claude Sonnet 5.5 | Alur QR-first (`D-003`), recommender v2, bahasa bawaan EN, mode demo, QR stiker, `scripts/e2e-check.mjs`, rekaman demo baru | belum di-commit |
-| 2026-11-17 | claude-code / Claude Sonnet 5.5 | PDF daftar pertanyaan wawancara (`deliverables/`) + rekaman demo Playwright (`npm run demo`, `scripts/record-demo.mjs`) | belum di-commit |
+| 2026-11-19 | claude-code / Claude Sonnet 5.5 | Alur QR-first (`D-003`), recommender v2, bahasa bawaan EN, mode demo, QR stiker, `scripts/e2e-check.mjs`, rekaman demo baru | sudah di-push |
+| 2026-11-17 | claude-code / Claude Sonnet 5.5 | PDF daftar pertanyaan wawancara (`deliverables/`) + rekaman demo Playwright (`npm run demo`, `scripts/record-demo.mjs`) | sudah di-push |
 | 2026-11-17 | claude-code / Claude Sonnet 5.5 | `.gitignore` + commit awal + push; setup Next.js; recommender + 49 test; UI app-like, wizard, `/cup/*` | commit awal (docs); kode belum di-commit |
 | 2026-11-17 | agy / Gemini 4 Hydrogen (Medium) | Clone `COURE-CUP`, analisis gap vs brief, konversi 2 PDF di `docs/` ke Markdown, buat handoff kit | `UNINITIALIZED` |
 
