@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
 import { useLang } from "./LangProvider";
 import { DISCLAIMER } from "@/lib/recommender";
@@ -102,12 +103,15 @@ export function Card({
   desc,
   accent,
   label,
+  image,
 }: {
   onClick: () => void;
   title: string;
   desc: string;
   accent?: boolean;
   label?: string;
+  /** Decorative: the card title already names the item, so the image gets an empty alt. */
+  image?: { src: string; width: number; height: number };
 }) {
   return (
     <motion.button
@@ -118,6 +122,18 @@ export function Card({
         accent ? "border-accent bg-accent text-white" : "border-line bg-surface"
       }`}
     >
+      {image && (
+        <div className="mb-3 w-full overflow-hidden rounded-2xl border border-line bg-white p-1.5">
+          <Image
+            src={image.src}
+            width={image.width}
+            height={image.height}
+            alt=""
+            sizes="(min-width: 768px) 30vw, 90vw"
+            className="h-auto w-full object-contain"
+          />
+        </div>
+      )}
       {label && (
         <span className={`mb-1 block text-sm font-bold ${accent ? "text-white/90" : "text-accent"}`}>
           {label}
