@@ -190,9 +190,9 @@ describe("WHO-based draft thresholds", () => {
     expect(factor(base({ heightCm: 170, weightKg: 72.5 }), "M", "adiposity")).toBeGreaterThan(0);
   });
 
-  it("waist counts from 94 cm (male) and 80 cm (female)", () => {
-    expect(factor(base({ sex: "male", waistCm: 93 }), "M", "adiposity")).toBe(0);
-    expect(factor(base({ sex: "male", waistCm: 94 }), "M", "adiposity")).toBeGreaterThan(0);
+  it("waist counts from 90 cm (male) and 80 cm (female)", () => {
+    expect(factor(base({ sex: "male", waistCm: 89 }), "M", "adiposity")).toBe(0);
+    expect(factor(base({ sex: "male", waistCm: 90 }), "M", "adiposity")).toBeGreaterThan(0);
     expect(factor(base({ sex: "female", waistCm: 79 }), "M", "adiposity")).toBe(0);
     expect(factor(base({ sex: "female", waistCm: 80 }), "M", "adiposity")).toBeGreaterThan(0);
   });

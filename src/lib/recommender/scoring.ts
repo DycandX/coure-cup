@@ -17,8 +17,8 @@ export const THRESHOLDS = {
   /** Neutral minimum for the best module; below it no module is suggested. */
   minPriority: 0.25,
   bp: { hypertension: [140, 90], highNormal: [130, 85] },
-  /** WHO waist circumference, increased risk. */
-  waistCm: { male: 94, female: 80 },
+  /** Asian-population waist circumference (WHO Expert Consultation 2011; WHO/IASO/IOTF 2000), DECISIONS D-005. */
+  waistCm: { male: 90, female: 80 },
   bmi: 25,
   glucose: { diabetesRange: 126, impairedFasting: 110 },
   ldl: { high: 160, borderline: 130, nearOptimal: 100 },
