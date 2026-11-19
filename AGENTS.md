@@ -15,10 +15,10 @@ Aturan kerja untuk AI agent di repo ini, apa pun harness dan modelnya. Konteks p
 
 ## Perintah
 ```bash
-# Akan diisi setelah inisialisasi proyek web (D-001), mis.:
-# npm install
-# npm test
-# npm run dev
+npm install
+npm run dev        # dev server
+npm run test:run   # unit test (Vitest)
+npm run build      # production build
 ```
 
 ## Aturan kode & konten CUORE

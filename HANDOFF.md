@@ -1,13 +1,13 @@
 ---
 schema_version: 1
-project: "web-course-atina"
+project: "web-coure-atina"
 status: "prototype"
-updated: "2026-11-17"
-author_harness: "agy"
-author_model: "Gemini 4 Hydrogen (Medium)"
-based_on: "UNINITIALIZED (belum ada commit di master)"
+updated: "2026-11-19"
+author_harness: "claude-code"
+author_model: "Claude Sonnet 5.5"
+based_on: "commit awal (docs: add handoff kit and .gitignore); kode aplikasi belum di-commit"
 ---
-# Handoff: web-course-atina (CUORE Web)
+# Handoff: web-coure-atina (CUORE Web)
 
 > Dokumen serah terima. Tujuannya: agent atau manusia lain (harness, AI, atau model yang berbeda) bisa melanjutkan pekerjaan tanpa kehilangan konteks. Baca bagian 0 lebih dulu, lalu [AGENTS.md](AGENTS.md).
 >
@@ -15,8 +15,8 @@ based_on: "UNINITIALIZED (belum ada commit di master)"
 
 | | |
 | :--- | :--- |
-| **Pohon kerja** | ada perubahan belum di-commit: `docs/`, `COURE-CUP/`, berkas handoff kit (repo root belum memiliki commit) |
-| **Test** | belum dijalankan (belum ada aplikasi/test suite di root) |
+| **Pohon kerja** | ada perubahan belum di-commit: seluruh aplikasi Next.js (`src/`, config, `package.json`), `AGENTS.md`, `DECISIONS.md`. Commit awal sudah di-push ke `origin/main` (DycandX/coure-cup). `docs/` dan `COURE-CUP/` ada di `.gitignore` |
+| **Test** | ✅ 2026-11-19: `npm run test:run` 70 lulus; `tsc`, `eslint`, `npm run build` bersih; `node scripts/e2e-check.mjs` 19/19 lulus di tiga ukuran (HP 390x780, tablet 768x1024, desktop 1440x900; `VIEWPORT=WxH`) |
 | **Pemilik** | `atina` / tim CUORE (5th IYC 2026, Diponegoro University). Bahasa percakapan: Indonesia. Kode, nama, dan pesan commit: Inggris |
 
 ---
@@ -24,9 +24,9 @@ based_on: "UNINITIALIZED (belum ada commit di master)"
 ## 0. Mulai di sini (60 detik)
 
 - **Tujuan projek:** Membangun ulang website **CUORE** (bubur instan gurih modular: 35 g Universal Base + 20 g modul S/L/M) agar terasa seperti aplikasi (*app-like*, mobile-first, transisi halus), dilengkapi wizard skrining *rule-based* on-device dan halaman QR per modul (`/cup/s`, `/cup/m`, `/cup/l`).
-- **Status sekarang:** Prototipe awal / tahap persiapan. Repo referensi `COURE-CUP` sudah di-clone ke `COURE-CUP/` (berisi halaman statis `index.html` dan mockup Streamlit `app.py`), sementara dokumen brief dan esai ilmiah sudah dikonversi ke Markdown di `docs/`.
-- **Sedang dikerjakan:** Penyusunan handoff kit dan konversi dokumen spesifikasi ke Markdown selesai; siap masuk tahap pemilihan tech stack & implementasi web baru.
-- **Langkah pertama yang disarankan:** Konfirmasi keputusan di `DECISIONS.md` (`D-001`: tech stack Next.js/React + Framer Motion vs lainnya, dan struktur repo root vs `COURE-CUP/`), lalu inisialisasi proyek web di root.
+- **Status sekarang:** Aplikasi Next.js berjalan dengan alur QR-first (`/cup/s|m|l` langsung membuka skrining; `D-003`), bahasa bawaan Inggris, tata letak responsif (HP/tablet/desktop), mode demo, QR stiker di `deliverables/qr/`. Kode belum di-commit. **`cuorecup.vercel.app/cup/s` masih 404** karena versi baru belum di-deploy. Repo referensi `COURE-CUP` sudah di-clone ke `COURE-CUP/` (berisi halaman statis `index.html` dan mockup Streamlit `app.py`), sementara dokumen brief dan esai ilmiah sudah dikonversi ke Markdown di `docs/`.
+- **Sedang dikerjakan:** Tidak ada. Menunggu: deploy oleh pemilik Vercel, konfirmasi dr. Enny atas ambang (`D-002`, `D-003`), pengecekan label kemasan sebelum QR dicetak. Tenggat 18 Nov 2026 sudah lewat menurut tanggal 2026-11-19; tahap berikutnya belum diketahui.
+- **Langkah pertama yang disarankan:** Lihat bagian 5 (tinjau dan commit kode, tinjauan klinisi atas `D-002`, uji aksesibilitas, aset resmi).
 - **Jangan lakukan:** Jangan menulis klaim medis/menyembuhkan/menurunkan kolesterol/mencegah penyakit, jangan menyebut S-CUP paling rendah natrium (L & M = 8 mg vs S = 17 mg), jangan menghilangkan label **estimasi** pada angka gizi, dan jangan mengirim data skrining ke server.
 
 ---
@@ -45,14 +45,14 @@ Prinsip yang dipegang:
 
 | Hal | Nilai |
 | :--- | :--- |
-| Lokasi | `E:\_PROJECT\web-course-atina` |
+| Lokasi | `E:\_PROJECT\web-coure-atina` (repo `origin`: github.com/DycandX/coure-cup, branch `main`) |
 | OS dan runtime | Windows, Node `v24.18.0`, Python `3.14.6`, Git `2.42.0.windows.2` |
-| Bahasa dan framework | Target: React / Next.js + Tailwind CSS + Framer Motion atau GSAP (menunggu `D-001`). Saat ini di `COURE-CUP/`: HTML statis + Streamlit |
+| Bahasa dan framework | Next.js 16 (App Router) + TypeScript + Tailwind 4 + Framer Motion + Vitest. `COURE-CUP/` (HTML statis + Streamlit) hanya referensi lama dan di-ignore |
 | Variabel lingkungan | `TIDAK ADA` (pemrosesan direncanakan 100% on-device) |
 | Layanan luar | Vercel (`cuorecup.vercel.app` sebagai target deploy) |
 
 ```bash
-# Belum ada proyek Node di root.
+# npm install && npm run dev | npm run test:run | npm run build
 # Untuk menjalankan mockup Streamlit lama di COURE-CUP/ (belum dicoba ⚠️):
 # pip install -r COURE-CUP/requirement.txt && streamlit run COURE-CUP/app.py
 ```
@@ -62,7 +62,7 @@ Prinsip yang dipegang:
 ## 3. Peta projek
 
 ```text
-docs/         Brief & esai ilmiah (.pdf & .md), poster (5thIYC...png), desain cup (L-CUP.png)
+docs/         (di-ignore git, hanya lokal) Brief & esai ilmiah (.pdf & .md), poster, desain cup
 COURE-CUP/    Clone repo referensi (cef94cd): index.html (567 baris), app.py (247 baris), requirement.txt
 HANDOFF.md    Dokumen serah terima ini
 AGENTS.md     Aturan kerja agent & larangan bahasa/klaim CUORE
@@ -80,7 +80,12 @@ Alur utama target: Landing → Home / Edukasi (modal kartu) / Produk (detail 3 c
 | Clone repo `COURE-CUP` | ✅ | 2026-11-17, commit `cef94cd` di `COURE-CUP/` |
 | Dokumen `docs/Brief_Web_CUORE.md` | ✅ | 2026-11-17, dikonversi lengkap dari `Brief_Web_CUORE.pdf` |
 | Dokumen `docs/Food_5th_IYC_CUORE_Scientific_Essay.md` | ✅ | 2026-11-17, dikonversi lengkap dari esai PDF 31 halaman |
-| Web baru (app-like + wizard + rute QR `/cup/*`) | ❌ | Belum dibuat; masih menunggu keputusan `D-001` |
+| Setup Next.js 16 + Tailwind 4 + Framer Motion + Vitest | ✅ | `npm run build` lulus; `D-001` Berlaku |
+| Recommender v2 `src/lib/recommender/` (consent, safety, skor S/L/M, "tidak ada prioritas", template) | ✅ | 70 test lulus, termasuk tes kepatuhan bahasa (`src/lib/compliance.test.ts`) |
+| UI app-like + wizard 1-2-3 + `/cup/s`, `/cup/m`, `/cup/l` (QR-first) | ⚠️ | `scripts/e2e-check.mjs` 16/16 pada build produksi (alur QR, catatan cup dipindai vs hasil, "See product", darurat, tidak ada prioritas + pointer gula darah, TD parsial, demo berlabel, ID/EN); belum diuji di perangkat nyata, Lighthouse, atau pembaca layar |
+| Tata letak responsif | ✅ | Grid 2-3 kolom dari lebar 768 px, tanpa scroll horizontal (dicek otomatis), tangkapan layar tablet dan desktop diperiksa; belum diuji di perangkat tablet/desktop nyata |
+| QR stiker `deliverables/qr/` | ⚠️ | 3 QR dan 12 stiker di PDF terbaca kembali ke `https://cuorecup.vercel.app/cup/s|m|l`; URL itu belum aktif (404) dan label kemasan belum dicek tim |
+| Ambang rule layer | ⚠️ | Draf sementara (`D-002`), perlu tinjauan klinisi |
 | Mockup lama `COURE-CUP/index.html` & `app.py` | ⚠️ | Diinspeksi secara statis; tidak dijalankan di browser/Streamlit |
 
 Masalah yang diketahui:
@@ -93,22 +98,27 @@ Masalah yang diketahui:
 
 | # | Langkah | Berkas utama | Selesai bila |
 | :---: | :--- | :--- | :--- |
-| 1 | Konfirmasi keputusan `D-001` dengan pemilik (framework, lokasi source code, bahasa UI default) | `DECISIONS.md` | Status `D-001` menjadi `Berlaku` |
-| 2 | Inisialisasi proyek web (Next.js App Router + Tailwind + Framer Motion) | `package.json` | `npm run dev` dan `npm run build` berjalan tanpa error |
-| 3 | Implementasi modul *rule-based* skrining (Consent + Safety Rule Layer + Tier 1/2 scoring + template output) beserta unit test | `src/lib/recommender/*` | Test rule layer (eksklusi hamil/ginjal/kedelai/disfagia) & skor S/M/L lulus semua |
-| 4 | Implementasi UI app-like (Landing, Edukasi modal, Produk 3 cup, Wizard 1-2-3) & halaman QR `/cup/s`, `/cup/m`, `/cup/l` | `src/app/*` | Semua rute `/cup/s`, `/cup/m`, `/cup/l` render mobile-first sesuai warna tema & aturan non-klaim |
+| 1 | Pemilik meninjau dan commit kode aplikasi (belum di-commit) | semua berkas baru | Commit `feat(...)` per area atas izin pemilik |
+| 2 | Deploy ke project Vercel baru milik pemilik (nama/domain, akun, dan sumber deploy masih ditanyakan; belum ada yang dibuat), lalu buat ulang QR dengan domain final dan uji `https://cuorecup.vercel.app/cup/s|m|l` di HP (data seluler) | n/a | Ketiga URL membuka skrining (bukan 404) |
+| 3 | dr. Enny mengonfirmasi ambang (`D-002`, `D-003`), tekanan darah opsional, dan teks edukasi/manfaat | `safety.ts`, `scoring.ts`, `copy.ts`, `products.ts` | Angka dan teks final; test diperbarui |
+| 4 | Cek label kemasan (typo, alergen kedelai, label L-CUP, nilai gizi berlabel estimasi), baru cetak QR | `deliverables/qr/` | Tim menyatakan label aman |
+| 5 | Pasang aset resmi (logo, foto cup, poster); uji aksesibilitas dan perangkat nyata (Android, iPhone, lansia) | `public/`, `src/components/*` | Tidak ada isu kritis |
 
 ---
 
 ## 6. Keputusan
 
-Keputusan lengkap dicatat di [DECISIONS.md](DECISIONS.md).
-Menunggu pemilik (jangan diputuskan sendiri oleh agent):
-- **D-001:** Tech stack & struktur repo — apakah proyek baru dibangun di root `web-course-atina` memakai Next.js (App Router) + Tailwind CSS + Framer Motion lalu di-push ke `COURE-CUP` atau repo baru? Rekomendasi: Next.js App Router + Tailwind + Framer Motion di root agar rute `/cup/s`, `/cup/m`, `/cup/l` dan deploy Vercel berjalan mulus.
+Keputusan lengkap dicatat di [DECISIONS.md](DECISIONS.md). `D-001` dan `D-003` Berlaku; angka klinis (`D-002`, `D-003`) masih draf dan menunggu dr. Enny. Keputusan akhir produk: Atina; keputusan klinis dan teks kesehatan: dr. Enny.
 
 ---
 
 ## 7. Hal yang mudah keliru
+
+- **`docs/` tidak ada di git** (`.gitignore`): klon baru tidak punya brief. Salinan ada di mesin pemilik; putuskan apakah `Brief_Web_CUORE.md` boleh di-commit.
+- **Teks edukasi dan teks manfaat produk ditulis agent** (termasuk angka pedoman WHO) dan perlu ditinjau tim sebelum rilis.
+- **Skrip ulang:** `npm run demo` merekam video (`deliverables/CUORE_demo.webm`, di-ignore git), `python scripts/make_qr.py [BASE_URL]` membuat ulang QR, `node scripts/e2e-check.mjs` menguji alur.
+- **Model ML belum ada.** Web hanya boleh menyebut "Rule-based (WHO thresholds), ML-ready"; skrip presentasi yang menyebut "machine learning ranks" tidak cocok dengan web.
+- `next dev` menulis ulang blok aturan Next.js ke `AGENTS.md`; periksa diff sebelum commit.
 
 - **Salah klaim natrium S-CUP:** Jangan tulis S-CUP lebih rendah natrium daripada L-CUP/M-CUP. Tabel gizi estimasi di `docs/Brief_Web_CUORE.md`: S-CUP = **17 mg**, sedangkan L-CUP dan M-CUP = **8 mg**. Keunggulan S-CUP adalah rasa umami tanpa garam tambahan.
 - **Generative AI di chatbot:** Esai menegaskan **tidak ada generative AI** untuk saran diet. Gunakan logika *rule-based* modular + kalimat template tertulis.
@@ -129,6 +139,9 @@ Menunggu pemilik (jangan diputuskan sendiri oleh agent):
 
 | Tanggal | Agent / model | Dikerjakan | Commit |
 | :--- | :--- | :--- | :--- |
+| 2026-11-19 | claude-code / Claude Sonnet 5.5 | Alur QR-first (`D-003`), recommender v2, bahasa bawaan EN, mode demo, QR stiker, `scripts/e2e-check.mjs`, rekaman demo baru | belum di-commit |
+| 2026-11-17 | claude-code / Claude Sonnet 5.5 | PDF daftar pertanyaan wawancara (`deliverables/`) + rekaman demo Playwright (`npm run demo`, `scripts/record-demo.mjs`) | belum di-commit |
+| 2026-11-17 | claude-code / Claude Sonnet 5.5 | `.gitignore` + commit awal + push; setup Next.js; recommender + 49 test; UI app-like, wizard, `/cup/*` | commit awal (docs); kode belum di-commit |
 | 2026-11-17 | agy / Gemini 4 Hydrogen (Medium) | Clone `COURE-CUP`, analisis gap vs brief, konversi 2 PDF di `docs/` ke Markdown, buat handoff kit | `UNINITIALIZED` |
 
 ---
@@ -140,3 +153,5 @@ git status -sb
 git log $(git log -1 --format=%H -- HANDOFF.md)..HEAD --oneline
 ```
 *(Catatan: karena repo root belum memiliki commit pertama, perintah kedua baru berlaku setelah commit awal dibuat).*
+
+
