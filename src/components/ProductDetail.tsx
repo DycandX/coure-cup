@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   BASE_COMPOSITION,
@@ -39,6 +40,22 @@ export function ProductDetail({
 
   return (
     <div data-theme={product.theme} className={`text-fg ${wide ? "md:grid md:grid-cols-2 md:gap-x-10" : ""}`}>
+      {product.image && (
+        <figure
+          className={`mb-4 overflow-hidden rounded-2xl border border-line bg-white p-2 sm:p-3 ${
+            wide ? "md:col-span-2" : ""
+          }`}
+        >
+          <Image
+            src={product.image.src}
+            width={product.image.width}
+            height={product.image.height}
+            alt={product.image.alt[lang]}
+            sizes={wide ? "(min-width: 768px) 720px, 92vw" : "(min-width: 768px) 620px, 92vw"}
+            className="h-auto w-full object-contain"
+          />
+        </figure>
+      )}
       <p className="text-base font-semibold text-accent md:col-span-2">{product.tagline[lang]}</p>
 
       <Section title={p.focus}>

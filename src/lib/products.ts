@@ -60,12 +60,20 @@ export const NUTRITION_LABEL: Record<NutritionKey, { label: Record<Lang, string>
   addedSugar: { label: { id: "Gula tambahan", en: "Added sugar" }, unit: "g" },
 };
 
+export interface ProductImage {
+  src: string;
+  width: number;
+  height: number;
+  alt: Record<Lang, string>;
+}
+
 export interface Product {
   id: ModuleId;
   slug: "s" | "l" | "m";
   name: string;
   /** Theme colour name used by Tailwind tokens (see globals.css). */
   theme: "pink" | "green" | "purple";
+  image?: ProductImage;
   tagline: Record<Lang, string>;
   focus: Record<Lang, string>;
   priorityFor: Record<Lang, string>;
@@ -84,6 +92,15 @@ export const PRODUCTS: Record<ModuleId, Product> = {
     slug: "s",
     name: "S-CUP",
     theme: "pink",
+    image: {
+      src: "/img/cups/s.webp",
+      width: 1200,
+      height: 323,
+      alt: {
+        id: "Desain sleeve S-CUP berwarna merah muda dengan ilustrasi bawang putih, bawang merah, sorgum, dan jamur tiram",
+        en: "S-CUP sleeve design in pink, with garlic, shallot, sorghum and oyster mushroom",
+      },
+    },
     tagline: { id: "Sodium-conscious", en: "Sodium-conscious" },
     focus: {
       id: "Rasa gurih dari jamur tiram, bawang putih, dan bawang merah, tanpa garam tambahan.",
@@ -126,6 +143,15 @@ export const PRODUCTS: Record<ModuleId, Product> = {
     slug: "m",
     name: "M-CUP",
     theme: "green",
+    image: {
+      src: "/img/cups/m.webp",
+      width: 1200,
+      height: 305,
+      alt: {
+        id: "Desain sleeve M-CUP berwarna hijau dengan ilustrasi tempe, kacang hijau, sorgum, dan jamur tiram",
+        en: "M-CUP sleeve design in green, with tempeh, mung bean, sorghum and oyster mushroom",
+      },
+    },
     tagline: { id: "Metabolic", en: "Metabolic" },
     focus: {
       id: "Menonjolkan pati resisten dan protein nabati.",
@@ -164,6 +190,15 @@ export const PRODUCTS: Record<ModuleId, Product> = {
     slug: "l",
     name: "L-CUP",
     theme: "purple",
+    image: {
+      src: "/img/cups/l.webp",
+      width: 1200,
+      height: 319,
+      alt: {
+        id: "Desain sleeve L-CUP berwarna ungu dengan ilustrasi umbi porang, biji selasih, sorgum, dan pisang hijau",
+        en: "L-CUP sleeve design in purple, with porang tuber, basil seed, sorghum and green banana",
+      },
+    },
     tagline: { id: "Lipid-oriented", en: "Lipid-oriented" },
     focus: {
       id: "Menonjolkan serat larut kental dari glukomanan porang dan biji selasih.",

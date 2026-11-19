@@ -1,4 +1,25 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
+
+/** Width and height from a WebP file header (VP8, VP8L or VP8X). */
+function webpSize(buf: Buffer): { width: number; height: number } {
+  if (buf.toString("ascii", 0, 4) !== "RIFF" || buf.toString("ascii", 8, 12) !== "WEBP") {
+    throw new Error("not a WebP file");
+  }
+  const chunk = buf.toString("ascii", 12, 16);
+  if (chunk === "VP8X") {
+    return { width: 1 + buf.readUIntLE(24, 3), height: 1 + buf.readUIntLE(27, 3) };
+  }
+  if (chunk === "VP8 ") {
+    return { width: buf.readUInt16LE(26) & 0x3fff, height: buf.readUInt16LE(28) & 0x3fff };
+  }
+  if (chunk === "VP8L") {
+    const b = buf.readUInt32LE(21);
+    return { width: (b & 0x3fff) + 1, height: ((b >> 14) & 0x3fff) + 1 };
+  }
+  throw new Error(`unknown WebP chunk ${chunk}`);
+}
 import {
   CONSULT_HEADLINE,
   DISCLAIMER,
@@ -51,7 +72,7 @@ const userFacingCopy = () => [
   ...strings(NONE_BODY),
   ...strings(MODULE_HEADLINE),
   ...strings(REASON_TEXT),
-  ...strings(PRODUCT_LIST.map((p) => [p.tagline, p.focus, p.priorityFor, p.benefit, p.allergens])),
+  ...strings(PRODUCT_LIST.map((p) => [p.tagline, p.focus, p.priorityFor, p.benefit, p.allergens, p.image?.alt])),
   ...strings(PREP_STEPS),
   ...strings(GENERAL_NOTE),
   ...strings(ESTIMATE_NOTE),
@@ -109,5 +130,19 @@ describe("product data (docs/Brief_Web_CUORE.md)", () => {
     const l = PRODUCTS.L.allergens.id.join(" ");
     expect(l).toMatch(/kesulitan menelan/);
     expect(l).toMatch(/kalsium oksalat/);
+  });
+
+  it("provides bilingual alt text and <200 KB sleeve images whose declared size matches the file", () => {
+    for (const p of PRODUCT_LIST) {
+      expect(p.image).toBeDefined();
+      expect(p.image?.alt.id.trim().length).toBeGreaterThan(0);
+      expect(p.image?.alt.en.trim().length).toBeGreaterThan(0);
+      const filePath = path.join(process.cwd(), "public", p.image!.src.replace(/^\//, ""));
+      expect(fs.existsSync(filePath), filePath).toBe(true);
+      const buf = fs.readFileSync(filePath);
+      expect(buf.length).toBeLessThan(200 * 1024);
+      // width/height feed next/image; a mismatch distorts the aspect ratio or shifts layout.
+      expect(webpSize(buf), filePath).toEqual({ width: p.image!.width, height: p.image!.height });
+    }
   });
 });

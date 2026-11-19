@@ -115,6 +115,11 @@ export function AppShell() {
                       title={p.name}
                       label={p.tagline[lang]}
                       desc={p.focus[lang]}
+                      image={
+                        p.image
+                          ? { src: p.image.src, width: p.image.width, height: p.image.height }
+                          : undefined
+                      }
                       onClick={() => setProduct(p.id)}
                     />
                   </div>
