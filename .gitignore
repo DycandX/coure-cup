@@ -34,3 +34,6 @@ deliverables/.video-tmp/
 
 # Generated deliverables (PDF, QR, demo video): regenerate with scripts/
 deliverables/
+
+# Poster contains photos and names of team members
+sprint/assets/poster-*

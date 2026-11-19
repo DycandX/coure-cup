@@ -9,6 +9,33 @@ Aturan:
 
 ---
 
+## D-005: Ambang rule layer dikonfirmasi tim (sebagian)
+
+| | |
+| :--- | :--- |
+| **Tanggal** | 2026-11-19 |
+| **Status** | Berlaku sebagian; tiga hal masih terbuka (di bawah) |
+| **Diputuskan oleh** | Konfirmasi tim (dr. Enny, disampaikan lewat pemilik; kutipan sumber dari tim, belum saya buka ulang) |
+
+- **Dikonfirmasi:** Tekanan darah boleh menjadi input opsional dan dipakai di modul S. Hipertensi mulai ≥140 sistolik atau ≥90 diastolik (WHO, pedoman hipertensi 2021). Lingkar pinggang Asia ≥90 cm pria dan ≥80 cm wanita (WHO Expert Consultation 2011; WHO/IASO/IOTF 2000). Gula puasa: diabetes ≥126 mg/dL, gangguan glukosa puasa 110-125 (WHO/IDF 2006). LDL dan trigliserida: WHO tidak menetapkan ambang; rujukannya ESC/EAS 2019 dan NCEP ATP III.
+- **Berubah di kode:** ambang pinggang pria 94 → 90 cm (`scoring.ts`), test diperbarui. Ambang TD ≥140/90 dan glukosa sudah sama dengan `D-003`. Angka LDL/TG draf sudah sejalan dengan kelas NCEP ATP III, jadi tidak diubah.
+- **Terbuka (perlu jawaban tim):** (1) BMI: batas WHO 25/30 dan titik Asia 23,0/27,5, kode masih ≥25. (2) Tingkat 130-139/85-89 (skor 0,4) tidak disebut pedoman WHO 2021; pertahankan atau hapus. (3) Angka lipid final dan apakah kolom LDL/HDL/TG di wizard diaktifkan lagi.
+- **Menggantikan:** menyempurnakan `D-002` dan `D-003`; keduanya tetap berlaku untuk bagian yang tidak disebut di sini.
+
+## D-004: Chatbot tanya-jawab produk berbasis aturan, on-device (diusulkan)
+
+| | |
+| :--- | :--- |
+| **Tanggal** | 2026-11-19 |
+| **Status** | Diusulkan (menunggu persetujuan pemilik; konten jantung menunggu dr. Enny) |
+| **Diputuskan oleh** | Usulan agent (Claude Sonnet 5.5) dari permintaan tim; belum disetujui |
+
+- **Konteks:** Tim meminta chatbot untuk cara seduh, alergen, siapa yang boleh minum, indikasi minum, dan gejala jantung. Web belum punya chatbot; wizard skrining adalah formulir.
+- **Keputusan (usulan):** Tanya-jawab berbasis aturan: normalisasi teks, triase darurat lebih dulu, pencocokan intent berbobot, jawaban tertulis dwibahasa dari `products.ts`. Tanpa model generatif, tanpa jaringan, tanpa log. UI chat dengan chip sebagai jalur utama.
+- **Alasan:** Esai dan brief menolak AI generatif untuk saran diet; `AGENTS.md` melarang kirim data ke server; panduan WHO mencatat risiko keluaran salah pada model besar.
+- **Ditolak:** LLM lewat API. Pencarian semantik on-device ditunda (unduhan model besar untuk alur QR di HP).
+- **Rincian:** `sprint/riset-chatbot.md`; task `sprint/T-03` sampai `T-05`.
+
 ## D-003: Alur QR-first, input baru, ambang WHO, dan bahasa bawaan Inggris
 
 | | |
