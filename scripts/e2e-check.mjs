@@ -1,7 +1,7 @@
 // Browser check of the QR-first screening flow against a production build.
 // Usage: npm run build && node scripts/e2e-check.mjs
 import { chromium } from "playwright";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 
 const PORT = 3101;
 // Usage: VIEWPORT=1440x900 node scripts/e2e-check.mjs   (default 390x780, a phone)
@@ -14,6 +14,13 @@ const check = (name, ok, detail = "") => {
   results.push(ok);
   console.log(`${ok ? "PASS" : "FAIL"}  ${name}${ok ? "" : "  -> " + detail}`);
 };
+
+// Refuse to run against a stale server left on the port: it would test some other build.
+try {
+  await fetch(BASE);
+  console.error(`Port ${PORT} is already in use; stop that server first so this build is the one under test.`);
+  process.exit(2);
+} catch {}
 
 const server = spawn(process.platform === "win32" ? "npx.cmd" : "npx", ["next", "start", "-p", String(PORT)], {
   stdio: "ignore",
@@ -194,9 +201,38 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
   t = await page.locator("main").innerText();
   check("About tab shows estimate label", /estimate/i.test(t));
   check("no horizontal scroll on About tab", await noOverflow(page));
+
+  // 9. /about page: ML notice, poster viewer opens, Escape closes and returns focus
+  page = await newPage();
+  await page.goto(`${BASE}/about`);
+  await sleep(1200);
+  t = await main(page).innerText();
+  check("/about shows the rule-based / ML-not-trained notice", /ML model has not been trained yet/.test(t), t.slice(0, 200));
+  check("no horizontal scroll on /about", await noOverflow(page));
+  const enlarge = page.getByRole("button", { name: "Enlarge poster", exact: true });
+  await click(page, enlarge);
+  check("poster viewer opens as a dialog", (await page.getByRole("dialog").count()) === 1);
+  await page.keyboard.press("Escape");
+  await sleep(450);
+  const focusedName = await page.evaluate(() => document.activeElement?.textContent?.trim());
+  check(
+    "Escape closes the viewer and returns focus",
+    (await page.getByRole("dialog").count()) === 0 && focusedName === "Enlarge poster",
+    String(focusedName),
+  );
+
+  // 10. About link is hidden during the wizard (leaving would drop answers)
+  page = await newPage();
+  await page.goto(BASE);
+  await sleep(1200);
+  check("About link visible on landing", (await page.getByRole("link", { name: "About" }).count()) === 1);
+  await click(page, page.getByRole("button", { name: "Start" }));
+  await click(page, main(page).getByRole("button", { name: /Check module priority/ }));
+  check("About link hidden in the wizard", (await page.getByRole("link", { name: "About" }).count()) === 0);
 } finally {
   await browser.close();
-  if (process.platform === "win32") spawn("taskkill", ["/PID", String(server.pid), "/T", "/F"], { stdio: "ignore" });
+  // Wait for taskkill: process.exit() below would otherwise leave next start running on the port.
+  if (process.platform === "win32") spawnSync("taskkill", ["/PID", String(server.pid), "/T", "/F"], { stdio: "ignore" });
   else server.kill();
 }
 const failed = results.filter((x) => !x).length;

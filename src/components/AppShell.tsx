@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { PRODUCT_LIST, PRODUCTS } from "@/lib/products";
 import type { ModuleId } from "@/lib/recommender";
@@ -44,7 +45,7 @@ export function AppShell() {
 
   return (
     <div className="mx-auto min-h-dvh max-w-5xl px-5 pb-10 sm:px-8">
-      <header className="flex min-h-16 items-center justify-between py-3">
+      <header className="flex min-h-16 items-center justify-between gap-2 py-3">
         {screen === "landing" ? (
           <span />
         ) : (
@@ -56,7 +57,18 @@ export function AppShell() {
             ← {t.back}
           </button>
         )}
-        <LangToggle />
+        <div className="flex items-center gap-2">
+          {/* Hidden during the wizard: leaving the page would drop the user's answers. */}
+          {screen !== "wizard" && (
+            <Link
+              href="/about"
+              className="inline-flex min-h-12 items-center rounded-full px-4 text-base font-bold text-accent underline underline-offset-4"
+            >
+              {t.about.nav}
+            </Link>
+          )}
+          <LangToggle />
+        </div>
       </header>
 
       <AnimatePresence mode="wait">
@@ -89,6 +101,13 @@ export function AppShell() {
               </div>
               <Card title={t.home.products.title} desc={t.home.products.desc} onClick={() => go("products")} />
               <Card title={t.home.education.title} desc={t.home.education.desc} onClick={() => go("education")} />
+              <Link
+                href="/about"
+                className="flex h-full w-full flex-col items-start justify-start rounded-3xl border-2 border-line bg-surface p-5 text-left shadow-sm md:col-span-2 md:p-6"
+              >
+                <span className="block text-xl font-bold text-accent-ink">{t.home.about.title}</span>
+                <span className="mt-1 block text-base text-muted">{t.home.about.desc}</span>
+              </Link>
             </section>
           )}
 

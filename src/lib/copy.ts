@@ -1,4 +1,14 @@
 import type { FoodKey, HistoryAnswers, Lang, SymptomAnswers } from "./recommender/types";
+import { PRODUCTS } from "./products";
+
+/** About-page nutrition list, built from products.ts so the numbers cannot drift. */
+const kcalSodium = (kcal: string, sodium: string) =>
+  (["S", "L", "M"] as const)
+    .map((id) => {
+      const p = PRODUCTS[id];
+      return `${p.name} ${p.nutrition.energyKcal} ${kcal}, ${sodium} ${p.nutrition.sodiumMg} mg`;
+    })
+    .join("; ");
 
 /** UI copy (ID/EN). Scanned by compliance.test.ts for forbidden claims. */
 
@@ -19,6 +29,25 @@ export interface Copy {
     education: { title: string; desc: string };
     products: { title: string; desc: string };
     wizard: { title: string; desc: string };
+    about: { title: string; desc: string };
+  };
+  about: {
+    nav: string;
+    title: string;
+    subtitle: string;
+    mlNotice: string;
+    summaryTitle: string;
+    bullets: string[];
+    posterTitle: string;
+    posterHint: string;
+    posterAlt: string;
+    zoomOpen: string;
+    zoomClose: string;
+    zoomIn: string;
+    zoomOut: string;
+    zoomReset: string;
+    viewerLabel: string;
+    panHint: string;
   };
   education: {
     title: string;
@@ -124,6 +153,35 @@ export const COPY: Record<Lang, Copy> = {
       education: { title: "Edukasi", desc: "Hipertensi, sodium, dan serat dalam bahasa sederhana." },
       products: { title: "Produk", desc: "Kenali S-CUP, M-CUP, dan L-CUP." },
       wizard: { title: "Cek prioritas modul", desc: "3 langkah singkat, diproses di perangkat Anda." },
+      about: { title: "Tentang & Poster", desc: "Poster ilmiah 5th IYC 2026 dan ringkasan konsep CUORE." },
+    },
+    about: {
+      nav: "Tentang",
+      title: "Tentang CUORE & Poster Ilmiah",
+      subtitle:
+        "Ringkasan konsep bubur instan gurih modular CUORE dari poster 5th International Youth Conference (IYC) 2026.",
+      mlNotice:
+        "Versi web saat ini berbasis aturan, model ML belum dilatih (memakai ambang WHO dan arsitektur siap ML / ML-ready).",
+      summaryTitle: "Ringkasan poster",
+      bullets: [
+        "CUORE ingin menjembatani anjuran umum seperti kurangi garam dan perbanyak serat dengan pangan gurih yang familiar dan terjangkau, sebagai inovasi pangan dan alat bantu keputusan.",
+        "Satu porsi 55 g terdiri dari 35 g Universal Base dan 20 g modul pilihan, berbahan pangan lokal seperti sorgum, beras merah, tepung tempe, kacang hijau, glukomanan porang, tepung pisang mentah, MOCAF, biji selasih, jamur tiram, bawang putih, dan bawang merah.",
+        "Tiga modul — S-CUP (Sodium-conscious, rasa umami jamur dan bawang tanpa garam tambahan), L-CUP (Lipid-oriented, serat larut kental dari porang dan selasih), dan M-CUP (Metabolic, pati resisten dan protein nabati) — adalah prioritas formulasi pangan, bukan pengobatan.",
+        "Skrining awal memeriksa kondisi keamanan (gejala darurat, kehamilan, ginjal, alergi kedelai, kesulitan menelan, dan penggunaan obat rutin) lalu memetakan prioritas modul berbasis aturan sebagai alat bantu keputusan, bukan diagnosis.",
+        "Semua jawaban skrining diproses langsung di perangkat Anda tanpa mengirim atau menyimpan data pribadi ke server eksternal, selaras dengan semangat UU PDP 2022.",
+        `Semua angka gizi per porsi 55 g (${kcalSodium("kkal", "natrium")}) adalah estimasi dan belum merupakan hasil uji laboratorium. Perlu diperhatikan: semua varian mengandung kedelai (tempe), dan serat kental L-CUP mengembang saat terkena air sehingga tidak ditujukan bagi orang dengan kesulitan menelan.`,
+      ],
+      posterTitle: "Poster 5th IYC 2026",
+      posterHint: "Ketuk poster untuk memperbesar dan menggeser tampilan.",
+      posterAlt:
+        "Poster ilmiah 5th International Youth Conference (IYC) 2026 berjudul Machine Learning-Assisted Dietary-Priority Profiling and Characterisation of a Modular Local Botanical Porridge (Sorghum bicolor - Tempeh - Amorphophallus muelleri): memuat latar belakang, bahan lokal, tabel gizi estimasi per 55 g (35 g Universal Base + 20 g modul S/L/M), alur skrining keamanan berbasis aturan dan pemetaan prioritas modul, tahapan produksi dan keamanan pangan, peta jalan validasi, serta kesimpulan.",
+      zoomOpen: "Perbesar poster",
+      zoomClose: "Tutup tampilan poster layar penuh",
+      zoomIn: "Perbesar",
+      zoomOut: "Perkecil",
+      zoomReset: "Ukuran pas layar",
+      viewerLabel: "Tampilan penuh poster ilmiah CUORE",
+      panHint: "Geser untuk menggulir poster. Tekan Escape atau tombol Tutup untuk keluar.",
     },
     education: {
       title: "Edukasi",
@@ -298,6 +356,35 @@ export const COPY: Record<Lang, Copy> = {
       education: { title: "Learn", desc: "Hypertension, sodium and fibre in plain language." },
       products: { title: "Products", desc: "Get to know S-CUP, M-CUP and L-CUP." },
       wizard: { title: "Check module priority", desc: "3 short steps, processed on your device." },
+      about: { title: "About & Poster", desc: "5th IYC 2026 scientific poster and CUORE concept summary." },
+    },
+    about: {
+      nav: "About",
+      title: "About CUORE & Scientific Poster",
+      subtitle:
+        "Summary of the CUORE modular savoury instant porridge concept from the 5th International Youth Conference (IYC) 2026 poster.",
+      mlNotice:
+        "The current web version is rule-based (WHO thresholds) and ML-ready; an ML model has not been trained yet.",
+      summaryTitle: "Poster summary",
+      bullets: [
+        "CUORE aims to turn general advice such as eating less salt and more fibre into a familiar, affordable savoury food, as a food innovation and decision-support concept.",
+        "One 55 g serving combines a 35 g Universal Base with a 20 g module of choice, made from local ingredients including sorghum, brown rice, tempeh flour, mung bean, porang glucomannan, raw banana flour, MOCAF, basil seed, oyster mushroom, garlic, and shallot.",
+        "Three modules — S-CUP (Sodium-conscious, umami from mushroom and alliums with no added salt), L-CUP (Lipid-oriented, viscous soluble fibre from porang and basil seed), and M-CUP (Metabolic, resistant starch and plant protein) — represent food formulation priorities, not treatments.",
+        "Initial screening checks safety exclusions (emergency symptoms, pregnancy, kidney disease, soy allergy, swallowing difficulty, and regular medication) and maps module priority using rules as a decision-support tool, not a diagnosis.",
+        "All screening answers are processed directly on your device without sending or storing personal data on any external server, in the spirit of Indonesia's PDP Law 2022.",
+        `All nutrition values per 55 g serving (${kcalSodium("kcal", "sodium")}) are estimates and not laboratory test results. Points to note: every variant contains soy (tempeh), and L-CUP's viscous fibre swells with water so it is not for people with swallowing difficulty.`,
+      ],
+      posterTitle: "5th IYC 2026 Poster",
+      posterHint: "Tap the poster to enlarge and pan around.",
+      posterAlt:
+        "5th International Youth Conference (IYC) 2026 scientific poster titled Machine Learning-Assisted Dietary-Priority Profiling and Characterisation of a Modular Local Botanical Porridge (Sorghum bicolor - Tempeh - Amorphophallus muelleri): covering background, local ingredients, estimated nutrition table per 55 g (35 g Universal Base + 20 g S/L/M module), rule-based safety screening and dietary priority workflow, production and food safety targets, validation roadmap, and conclusion.",
+      zoomOpen: "Enlarge poster",
+      zoomClose: "Close full-screen poster viewer",
+      zoomIn: "Zoom in",
+      zoomOut: "Zoom out",
+      zoomReset: "Fit to screen",
+      viewerLabel: "Full-screen CUORE scientific poster viewer",
+      panHint: "Drag or scroll to pan around the poster. Press Escape or Close to exit.",
     },
     education: {
       title: "Learn",
