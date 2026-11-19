@@ -27,3 +27,10 @@ Thumbs.db
 .claude/
 npm-debug.log*
 .vercel
+
+# Generated demo recordings
+deliverables/*.webm
+deliverables/.video-tmp/
+
+# Generated deliverables (PDF, QR, demo video): regenerate with scripts/
+deliverables/
