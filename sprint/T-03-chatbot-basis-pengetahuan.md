@@ -1,7 +1,7 @@
 ---
 id: T-03
 title: Chatbot - susun basis pengetahuan lima topik (ID/EN)
-status: todo
+status: done (belum di-commit)
 estimate: M
 depends_on: []
 ---
@@ -41,8 +41,8 @@ Tiap entri berisi: `id`, `intent`, `moduleScope` (semua atau S/M/L), `answer` ID
 
 ## Kriteria selesai
 
-- [ ] Lima topik tercakup, masing-masing minimal satu jawaban ID dan EN; entri perbandingan dan klaim ada.
-- [ ] Jawaban produk dibangun dari `products.ts`; tidak ada angka gizi atau bahan yang diketik ulang.
-- [ ] Entri jantung bertanda `source` dan `status: "draft"`.
-- [ ] Tidak ada kata terlarang (lihat `AGENTS.md`); jawaban gizi berlabel estimasi.
-- [ ] `tsc`, `eslint`, dan test bersih.
+- [x] Lima topik tercakup, masing-masing minimal satu jawaban ID dan EN; entri perbandingan dan klaim ada.
+- [x] Jawaban produk dibangun dari `products.ts`; tidak ada angka gizi atau bahan yang diketik ulang.
+- [x] Entri jantung bertanda `source` dan `status: "draft"`.
+- [x] Tidak ada kata terlarang (lihat `AGENTS.md`); jawaban gizi berlabel estimasi.
+- [x] `tsc`, `eslint`, dan test bersih.
