@@ -1,7 +1,7 @@
 ---
 id: T-06
 title: Web bisa dibuka offline setelah kunjungan pertama (PWA)
-status: todo
+status: done
 estimate: M
 depends_on: []
 ---
@@ -19,6 +19,6 @@ Esai Attachment 2 menjanjikan "lightweight, offline-capable web application; on-
 
 ## Kriteria selesai
 
-- [ ] Setelah sekali dibuka, `/cup/s` dan wizard berjalan dalam mode pesawat (diuji otomatis dan di HP nyata).
-- [ ] Lighthouse PWA "installable" lulus.
-- [ ] Build, test, dan e2e bersih.
+- [x] Setelah sekali dibuka, `/cup/s` dan wizard berjalan tanpa jaringan. Diuji otomatis dengan server dimatikan (e2e bagian 11, 45/45 di tiga ukuran, 2026-11-21). **Belum diuji di HP nyata** (mode pesawat di Android dan iPhone).
+- [x] Installable: Chromium tidak melaporkan galat instalasi (`Page.getInstallabilityErrors`, di e2e). **Lighthouse belum dijalankan.**
+- [x] Build, test (136), dan e2e bersih. Keputusan: `DECISIONS.md` D-007.

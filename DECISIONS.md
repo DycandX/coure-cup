@@ -9,6 +9,19 @@ Aturan:
 
 ---
 
+## D-007: PWA offline dengan service worker tulisan sendiri (tanpa library)
+
+| | |
+| :--- | :--- |
+| **Tanggal** | 2026-11-21 |
+| **Status** | Berlaku (sprint T-06; esai menjanjikan web ringan yang bisa offline, jawaban tim B5) |
+| **Diputuskan oleh** | Agent (Claude Sonnet 5.5), mengikuti panduan PWA Next.js; belum dikonfirmasi pemilik |
+
+- **Keputusan:** `public/sw.js` (tulisan sendiri) menyimpan halaman `/`, `/about`, `/model`, `/cup/s|m|l`, aset build, gambar, dan ikon di Cache Storage. Halaman: jaringan dulu dengan batas 4 detik, lalu cache. Aset: cache dulu. Manifest di `src/app/manifest.ts`. Terdaftar hanya di produksi sebagai `/sw.js?v=<id build>`, jadi tiap deploy memasang cache baru dan menghapus yang lama.
+- **Privasi:** hanya berkas publik yang disimpan. Worker mengabaikan semua permintaan selain GET ke asal yang sama; jawaban skrining tetap di memori React. Dijaga `src/lib/pwa.test.ts`.
+- **Ditolak:** `next-pwa` atau Serwist (dependensi baru untuk satu worker kecil) dan `experimental.useOffline` (tidak membuka halaman penuh saat offline).
+- **Konsekuensi:** Bila rute baru ditambah, masukkan ke `PAGES` di `sw.js` (test menjaganya). Peramban lama tanpa service worker tetap berfungsi seperti biasa.
+
 ## D-006: Jawaban tim diterapkan ke rule layer, wizard, dan konten (usulan, menunggu dr. Enny)
 
 | | |
