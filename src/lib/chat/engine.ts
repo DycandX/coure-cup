@@ -9,6 +9,7 @@ import {
   MEDICAL_SINGLE,
   MIN_SCORE,
   PERSONAL_MARKERS,
+  SWALLOWING_SINGLE,
 } from "./intents";
 import { renderAnswer } from "./knowledge";
 import { compile, hasAny, hasTerm, tokenize } from "./text";
@@ -23,7 +24,8 @@ import type { ChatAnswer, IntentId } from "./types";
  * Order of decisions, first match wins:
  *   1. emergency triage            -> fixed emergency message
  *   2. health or cure claim        -> fixed non-claim answer
- *   3. medication, pregnancy, own condition -> refer to a health professional
+ *   3. medication, pregnancy, own condition -> refer to a health professional;
+ *      swallowing difficulty (a safety exclusion) -> the consult answer
  *   4. best keyword score at or above MIN_SCORE -> that topic
  *   5. otherwise                   -> "not sure" with topic chips (never a guess)
  *
@@ -57,6 +59,7 @@ export interface ChatContext {
 const claimSingle = compile(CLAIM_SINGLE);
 const claimPairs = CLAIM_PAIRS.map(([a, b]) => [compile(a), compile(b)] as const);
 const medicalSingle = compile(MEDICAL_SINGLE);
+const swallowing = compile(SWALLOWING_SINGLE);
 const disease = compile(DISEASE_TERMS);
 const personal = compile(PERSONAL_MARKERS);
 const education = compile(EDUCATION_TERMS);
@@ -72,6 +75,8 @@ const isClaim = (tokens: string[]) =>
 
 const isMedical = (tokens: string[]) =>
   hasAny(tokens, medicalSingle) || (hasAny(tokens, disease) && hasAny(tokens, personal) && !hasAny(tokens, education));
+
+const isSwallowing = (tokens: string[]) => hasAny(tokens, swallowing);
 
 /** "L-CUP", "LCUP" or "module L": the one cup the message is about, if exactly one. */
 function mentionedModule(tokens: string[]): ModuleId | undefined {
@@ -110,6 +115,7 @@ export function classify(input: string, ctx: ChatContext = {}): ReplyRef {
   if (triage(text).length > 0) return { reason: "triage", intent: "heart.emergency" };
   if (isClaim(tokens)) return { reason: "claim", intent: "claims.health", module: cup };
   if (isMedical(tokens)) return { reason: "medical", intent: "out.of.scope", module: cup };
+  if (isSwallowing(tokens)) return { reason: "medical", intent: "who.consult", module: cup };
 
   const intent = bestIntent(tokens);
   return intent ? { reason: "match", intent, module: cup } : { reason: "unknown", intent: "unknown", module: cup };

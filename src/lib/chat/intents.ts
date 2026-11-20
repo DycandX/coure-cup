@@ -179,6 +179,17 @@ export const MEDICAL_SINGLE: string[] = [
   "my condition", "my disease", "kesehatan pribadi", "personal health",
 ];
 
+/**
+ * Swallowing difficulty is a safety exclusion (the wizard sends these users to a professional),
+ * so a question about it is answered with the consult text, never with "who can have it".
+ */
+export const SWALLOWING_SINGLE: string[] = [
+  "sulit menelan", "susah menelan", "kesulitan menelan", "tidak bisa menelan", "tidak dapat menelan",
+  "sulit telan", "susah telan", "masalah menelan", "gangguan menelan", "disfagia", "dysphagia",
+  "difficulty swallowing", "trouble swallowing", "hard to swallow", "difficult to swallow", "swallowing problem",
+  "swallowing problems", "swallowing difficulty", "cannot swallow", "can not swallow", "unable to swallow",
+];
+
 /** A named condition plus a personal or permission word ("aman untuk penderita diabetes?"). */
 export const DISEASE_TERMS: string[] = [
   "diabetes", "diabetic", "diabetics", "kencing manis", "hipertensi", "hypertension", "darah tinggi",

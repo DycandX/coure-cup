@@ -376,6 +376,31 @@ describe("claim and medical guards", () => {
     }
   });
 
+  // Swallowing difficulty is a hard safety exclusion: never answered as "who can have it".
+  const SWALLOWING = [
+    "sulit menelan",
+    "susah menelan",
+    "saya kesulitan menelan, apakah aman",
+    "tidak bisa menelan dengan baik",
+    "L-CUP aman untuk yang susah menelan?",
+    "difficulty swallowing",
+    "trouble swallowing",
+    "dysphagia",
+    "is L-CUP safe if I can't swallow well",
+    "my mother has a swallowing problem, can she eat it",
+  ];
+  it.each(SWALLOWING)("swallowing difficulty goes to the consult answer, with or without a cup in context: %s", (msg) => {
+    for (const cup of [undefined, "L", "S"] as const) {
+      for (const lang of LANGS) {
+        const r = answer(msg, lang, { module: cup });
+        expect(r.intent, `${msg} / ${cup}`).toBe("who.consult");
+        expect(r.reason).toBe("medical");
+        expect(r.lines.join(" ")).toMatch(lang === "id" ? /menelan/i : /swallow/i);
+      }
+    }
+    expect(triage(msg), msg).toEqual([]);
+  });
+
   it("does not treat general education about signs as a personal medical question", () => {
     for (const msg of ["apa gejala penyakit jantung", "heart disease signs", "tanda stroke"]) {
       expect(classify(msg).reason, msg).toBe("match");
