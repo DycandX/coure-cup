@@ -1,5 +1,6 @@
 // Browser check of the QR-first screening flow against a production build.
 // Usage: npm run build && node scripts/e2e-check.mjs
+// Against a deployed site instead: BASE_URL=https://cuorecup.vercel.app node scripts/e2e-check.mjs
 import { chromium } from "playwright";
 import { spawn, spawnSync } from "node:child_process";
 
@@ -7,7 +8,8 @@ const PORT = 3101;
 // Usage: VIEWPORT=1440x900 node scripts/e2e-check.mjs   (default 390x780, a phone)
 const [VW, VH] = (process.env.VIEWPORT ?? "390x780").split("x").map(Number);
 const PHONE = VW < 768;
-const BASE = `http://localhost:${PORT}`;
+const REMOTE = process.env.BASE_URL?.replace(/\/$/, "");
+const BASE = REMOTE ?? `http://localhost:${PORT}`;
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const results = [];
 const check = (name, ok, detail = "") => {
@@ -16,16 +18,20 @@ const check = (name, ok, detail = "") => {
 };
 
 // Refuse to run against a stale server left on the port: it would test some other build.
-try {
-  await fetch(BASE);
-  console.error(`Port ${PORT} is already in use; stop that server first so this build is the one under test.`);
-  process.exit(2);
-} catch {}
+if (!REMOTE) {
+  try {
+    await fetch(BASE);
+    console.error(`Port ${PORT} is already in use; stop that server first so this build is the one under test.`);
+    process.exit(2);
+  } catch {}
+}
 
-const server = spawn(process.platform === "win32" ? "npx.cmd" : "npx", ["next", "start", "-p", String(PORT)], {
-  stdio: "ignore",
-  shell: process.platform === "win32",
-});
+const server = REMOTE
+  ? null
+  : spawn(process.platform === "win32" ? "npx.cmd" : "npx", ["next", "start", "-p", String(PORT)], {
+      stdio: "ignore",
+      shell: process.platform === "win32",
+    });
 for (let i = 0; i < 60; i++) {
   try {
     if ((await fetch(BASE)).ok) break;
@@ -35,6 +41,7 @@ for (let i = 0; i < 60; i++) {
 
 // Wait for taskkill: process.exit() would otherwise leave next start running on the port.
 const stopServer = () => {
+  if (!server) return; // remote run: nothing was started here
   if (process.platform === "win32") spawnSync("taskkill", ["/PID", String(server.pid), "/T", "/F"], { stdio: "ignore" });
   else server.kill();
 };
