@@ -15,12 +15,14 @@ import {
 import {
   HEART_ATTACK,
   HEART_LIMITS,
+  HEART_REFERRAL,
   OTHER_SIGNS,
   SEEK_CARE_NOW,
   SEEK_CARE_SOON,
   SILENT_NOTE,
   STROKE,
 } from "./heart-info";
+import { CHAT_CONFIG } from "./config";
 import type { AnswerContext, ChatAnswer, IntentId, KnowledgeEntry } from "./types";
 import { INTENT_IDS } from "./types";
 
@@ -228,16 +230,19 @@ const ENTRIES: KnowledgeEntry[] = [
     id: "heart.symptoms",
     chip: T("Tanda dan keluhan penyakit jantung", "Heart disease signs and complaints"),
     moduleScope: "all",
-    answer: (lang) => [
-      lang === "id"
-        ? "Informasi umum tentang tanda penyakit jantung dan pembuluh darah:"
-        : "General information about signs of heart and blood-vessel disease:",
-      ...[HEART_ATTACK, STROKE, OTHER_SIGNS].map((s) => `${pick(lang, s.title)}: ${s.items[lang].join(" ")}`),
-      SILENT_NOTE[lang],
-      SEEK_CARE_NOW[lang],
-      SEEK_CARE_SOON[lang],
-      HEART_LIMITS[lang],
-    ],
+    answer: (lang) =>
+      CHAT_CONFIG.heartEducation
+        ? [
+            lang === "id"
+              ? "Informasi umum tentang tanda penyakit jantung dan pembuluh darah:"
+              : "General information about signs of heart and blood-vessel disease:",
+            ...[HEART_ATTACK, STROKE, OTHER_SIGNS].map((s) => `${pick(lang, s.title)}: ${s.items[lang].join(" ")}`),
+            SILENT_NOTE[lang],
+            SEEK_CARE_NOW[lang],
+            SEEK_CARE_SOON[lang],
+            HEART_LIMITS[lang],
+          ]
+        : HEART_REFERRAL[lang],
     followUps: ["heart.emergency", "out.of.scope", "claims.health"],
     source: "who-kemenkes",
     status: "draft",

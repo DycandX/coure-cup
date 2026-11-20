@@ -88,6 +88,23 @@ export const SEEK_CARE_SOON: Record<Lang, string> = {
   en: "Complaints that keep coming back or worry you should be checked by a doctor, because only an examination by a health professional can find the cause.",
 };
 
+/**
+ * Used instead of the signs list when CHAT_CONFIG.heartEducation is off: refer only.
+ * Names no product and gives no diet advice.
+ */
+export const HEART_REFERRAL: Record<Lang, string[]> = {
+  id: [
+    "Tanda dan keluhan jantung perlu dinilai oleh tenaga kesehatan. Chat ini hanya memberi informasi produk dan tidak menjelaskan gejalanya.",
+    `Bila Anda sedang mengalami nyeri dada, sesak napas, pingsan, atau lemah mendadak, jangan menunda. ${EMERGENCY_CALL.id}`,
+    "Keluhan yang berulang atau membuat Anda khawatir sebaiknya diperiksakan ke dokter.",
+  ],
+  en: [
+    "Heart signs and complaints need to be assessed by a health professional. This chat only gives product information and does not explain the symptoms.",
+    `If you are having chest pain, shortness of breath, fainting or sudden weakness right now, do not wait. ${EMERGENCY_CALL.en}`,
+    "Complaints that keep coming back or worry you should be checked by a doctor.",
+  ],
+};
+
 /** Said with every heart answer: what this is not. */
 export const HEART_LIMITS: Record<Lang, string> = {
   id: "Ini informasi umum, bukan diagnosis, dan daftarnya tidak lengkap. CUORE adalah pangan dan tidak dimaksudkan untuk menanggapi tanda-tanda ini.",
