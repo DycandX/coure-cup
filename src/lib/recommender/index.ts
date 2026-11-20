@@ -8,6 +8,7 @@ export { scoreModules, THRESHOLDS } from "./scoring";
 export {
   renderRecommendation,
   DISCLAIMER,
+  EMERGENCY_CALL,
   MODULE_NAME,
   EXCLUSION_TEXT,
   REASON_TEXT,

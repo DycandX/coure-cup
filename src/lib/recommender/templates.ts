@@ -19,6 +19,17 @@ export const DISCLAIMER: Record<Lang, string> = {
   en: "Decision-support tool, not a diagnosis.",
 };
 
+/**
+ * The one emergency call-to-action, shared by the wizard and the chat (team answer
+ * A10). 119 = Kemenkes medical emergency line (also in SATUSEHAT Mobile);
+ * 112 = Komdigi single emergency number. Checked on kemkes.go.id and
+ * layanan112.komdigi.go.id, 2026-11-21.
+ */
+export const EMERGENCY_CALL: Record<Lang, string> = {
+  id: "Segera ke IGD terdekat atau hubungi 119 (darurat medis Kemenkes) atau 112 (panggilan darurat nasional).",
+  en: "Go to the nearest emergency department now, or call 119 (Ministry of Health medical emergency line) or 112 (national emergency number).",
+};
+
 export const CONSULT_HEADLINE: Record<Lang, string> = {
   id: "Konsultasikan dengan tenaga kesehatan",
   en: "Please consult a health professional",
@@ -44,8 +55,8 @@ export const EXCLUSION_TEXT: Record<ExclusionCode, Record<Lang, string>> = {
     en: "This tool is for adults (18 years and over) only.",
   },
   emergency_symptoms: {
-    id: "Nyeri dada, sesak napas, pingsan, atau lemah mendadak perlu segera diperiksa tenaga kesehatan atau layanan gawat darurat.",
-    en: "Chest pain, shortness of breath, fainting or sudden weakness need prompt attention from a health professional or emergency services.",
+    id: `Nyeri dada, sesak napas, pingsan, atau lemah mendadak perlu segera diperiksa tenaga kesehatan atau layanan gawat darurat. ${EMERGENCY_CALL.id}`,
+    en: `Chest pain, shortness of breath, fainting or sudden weakness need prompt attention from a health professional or emergency services. ${EMERGENCY_CALL.en}`,
   },
   pregnant: {
     id: "Kehamilan perlu diperhatikan: bicarakan dulu dengan tenaga kesehatan.",
