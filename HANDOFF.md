@@ -16,7 +16,7 @@ based_on: "8de5b76 (docs: D-004 in force, D-006 team answers)"
 | | |
 | :--- | :--- |
 | **Pohon kerja** | bersih setelah commit chat. Sampai `3e5eaf5` (T-06 PWA) sudah di-push ke `origin/main` (DycandX/coure-cup) dan live; commit chat (T-04 dan T-05) dan dokumennya masih lokal. `docs/`, `COURE-CUP/`, dan `deliverables/` ada di `.gitignore` |
-| **Test** | ✅ 2026-11-21 di `8de5b76`: `npm run test:run` 403 lulus; `tsc`, `eslint`, `npm run build` bersih; `node scripts/e2e-check.mjs` 70/70 lulus pada build lokal di tiga ukuran (termasuk chat dan uji offline dengan server dimatikan) (HP 390x780, tablet 768x1024, desktop 1440x900; `VIEWPORT=WxH`). Terhadap domain live (`BASE_URL=https://cuorecup.vercel.app`): 27/27 pada ukuran HP, diuji sebelum T-07 tayang. Skrip e2e menolak berjalan bila port 3101 terpakai |
+| **Test** | ✅ 2026-11-21 di `8de5b76`: `npm run test:run` 413 lulus; `tsc`, `eslint`, `npm run build` bersih; `node scripts/e2e-check.mjs` 73/73 lulus pada build lokal di tiga ukuran (termasuk chat dan uji offline dengan server dimatikan) (HP 390x780, tablet 768x1024, desktop 1440x900; `VIEWPORT=WxH`). Terhadap domain live (`BASE_URL=https://cuorecup.vercel.app`): 27/27 pada ukuran HP, diuji sebelum T-07 tayang. Skrip e2e menolak berjalan bila port 3101 terpakai |
 | **Pemilik** | `atina` / tim CUORE (5th IYC 2026, Diponegoro University). Bahasa percakapan: Indonesia. Kode, nama, dan pesan commit: Inggris |
 
 ---
@@ -106,8 +106,8 @@ Masalah yang diketahui:
 | 2 | Uji `https://cuorecup.vercel.app/cup/s|m|l` di HP (data seluler) dan jalankan `scripts/e2e-check.mjs` terhadap domain live | n/a | Ketiga URL membuka skrining di perangkat nyata |
 | 3 | Tutup tiga hal terbuka `D-005` (BMI, tingkat TD 130-139, angka lipid) dan teks edukasi/manfaat oleh dr. Enny | `safety.ts`, `scoring.ts`, `copy.ts`, `products.ts` | Angka dan teks final; test diperbarui |
 | 4 | Cek label kemasan (typo, alergen kedelai, label L-CUP, nilai gizi berlabel estimasi), baru cetak QR | `deliverables/qr/` | Tim menyatakan label aman |
-| 6 | Kirim `src/lib/chat/triage.ts` dan `heart-info.ts` ke dr. Enny; isi `BREW_DETAILS` bila data seduh datang. Uji chat dengan pembaca layar dan di HP nyata | `src/lib/chat/*` | Daftar darurat dan teks jantung disetujui atau diubah |
 | 5 | Pasang aset resmi (logo, foto cup, poster); uji aksesibilitas dan perangkat nyata (Android, iPhone, lansia) | `public/`, `src/components/*` | Tidak ada isu kritis |
+| 6 | Kirim `src/lib/chat/triage.ts` dan `heart-info.ts` ke dr. Enny; isi `BREW_DETAILS` bila data seduh datang. Uji chat dengan pembaca layar dan di HP nyata | `src/lib/chat/*` | Daftar darurat dan teks jantung disetujui atau diubah |
 
 ---
 

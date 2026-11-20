@@ -285,6 +285,23 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
   await click(page, main(page).getByRole("button", { name: /Check module priority/ }));
   check("About link hidden in the wizard", (await page.getByRole("link", { name: "About" }).count()) === 0);
 
+  // 10a. The whole wizard from the home page, where the floating chat button sits over the page.
+  // Every click below fails if that button ever covers a control (Playwright refuses to click through it).
+  {
+    const homePage = await newPage();
+    await homePage.goto(BASE);
+    await sleep(1200);
+    check("floating chat button is present on the home page", (await homePage.getByRole("button", { name: "Ask CUORE" }).count()) === 1);
+    await click(homePage, homePage.getByRole("button", { name: "Start" }));
+    await click(homePage, main(homePage).getByRole("button", { name: /Check module priority/ }));
+    await step1(homePage);
+    await step2(homePage);
+    await step3(homePage, saltyFoods);
+    t = await text(homePage);
+    check("wizard completes from the home page with the chat button present", /S-CUP/.test(t) && /Rule-based \(WHO thresholds\), ML-ready/.test(t), t.slice(0, 200));
+    check("no horizontal scroll on the home-page result", await noOverflow(homePage));
+  }
+
   // 10b. Chat (T-04, T-05): rule-based Q&A, emergency reply, claim guard, no network, nothing kept
   {
     const chatPage = await newPage();
