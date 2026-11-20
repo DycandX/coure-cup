@@ -2,6 +2,7 @@
 import { Geist } from "next/font/google";
 import "./globals.css";
 import { LangProvider } from "@/components/LangProvider";
+import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
       <body className="min-h-full">
         <LangProvider>{children}</LangProvider>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

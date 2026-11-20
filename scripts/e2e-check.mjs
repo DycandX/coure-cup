@@ -284,6 +284,82 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
   await click(page, page.getByRole("button", { name: "Start" }));
   await click(page, main(page).getByRole("button", { name: /Check module priority/ }));
   check("About link hidden in the wizard", (await page.getByRole("link", { name: "About" }).count()) === 0);
+
+  // 11. Offline (T-06): after one visit, the QR page, the wizard and the other pages work with no network.
+  // Keep this last: for a local run it stops the server, so nothing can answer and the test is real.
+  {
+    const ctx = await browser.newContext({ viewport: { width: VW, height: VH }, isMobile: PHONE, hasTouch: PHONE });
+    const op = await ctx.newPage();
+    await op.goto(`${BASE}/cup/s`);
+    await sleep(800);
+    let cached = 0;
+    for (let i = 0; i < 40 && cached < 6; i++) {
+      cached = await op.evaluate(async () => {
+        const reg = await navigator.serviceWorker?.getRegistration();
+        if (!reg?.active) return 0; // active only after the install step finished storing the pages
+        const names = (await caches.keys()).filter((k) => k.startsWith("cuore-"));
+        return names.length ? (await (await caches.open(names[0])).keys()).length : 0;
+      });
+      if (cached < 6) await sleep(500);
+    }
+    check("service worker is active and has cached the pages", cached >= 6, `cached entries: ${cached}`);
+    await sleep(1500); // let the page report the files it loaded (exact image sizes)
+
+    const cdp = await ctx.newCDPSession(op);
+    const { installabilityErrors } = await cdp.send("Page.getInstallabilityErrors");
+    check("installable: no installability errors", installabilityErrors.length === 0, JSON.stringify(installabilityErrors));
+
+    if (!REMOTE) {
+      stopServer();
+      let dead = false;
+      try {
+        await fetch(BASE);
+      } catch {
+        dead = true;
+      }
+      check("server stopped, so the next checks are truly offline", dead);
+    }
+    await ctx.setOffline(true);
+
+    await op.reload();
+    await sleep(1200);
+    check("offline: /cup/s opens from the cache", /You scanned S-CUP/.test(await op.locator("header").innerText()));
+    await step1(op);
+    await step2(op);
+    await step3(op, saltyFoods);
+    t = await text(op);
+    check("offline: wizard completes and shows a result", /S-CUP/.test(t) && /Rule-based \(WHO thresholds\), ML-ready/.test(t), t.slice(0, 200));
+    check(
+      "offline: disclaimer still shown",
+      /Decision-support tool, not a diagnosis\./.test(await op.locator("body").innerText()),
+    );
+    const imageOk = await op.evaluate(async () => {
+      const exact = await fetch("/img/cups/s.webp");
+      // A size the browser never asked for: the worker falls back to the original file.
+      const resized = await fetch("/_next/image?url=%2Fimg%2Fcups%2Fs.webp&w=640&q=75");
+      return exact.ok && resized.ok;
+    });
+    check("offline: cup images are served from the cache", imageOk);
+
+    await op.goto(BASE);
+    await sleep(1200);
+    check("offline: start page opens", (await op.getByRole("button", { name: "Start" }).count()) === 1);
+    await click(op, op.getByRole("link", { name: "About" }));
+    await sleep(800);
+    t = await main(op).innerText();
+    check("offline: About opens by link", /ML model has not been trained yet/.test(t), t.slice(0, 120));
+    await click(op, main(op).getByRole("link", { name: /View the model card/ }));
+    await sleep(800);
+    t = await main(op).innerText();
+    check("offline: model card opens by link", /Stage B/.test(t), t.slice(0, 120));
+    for (const cup of ["m", "l"]) {
+      await op.goto(`${BASE}/cup/${cup}`);
+      await sleep(900);
+      check(`offline: /cup/${cup} opens`, new RegExp(`You scanned ${cup.toUpperCase()}-CUP`).test(await op.locator("header").innerText()));
+    }
+    await ctx.setOffline(false);
+    await ctx.close();
+  }
 } finally {
   await browser.close();
   stopServer();
