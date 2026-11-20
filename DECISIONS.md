@@ -9,6 +9,20 @@ Aturan:
 
 ---
 
+## D-008: Rancangan chat: urutan keputusan, triase tidak bisa dimatikan, tombol per halaman
+
+| | |
+| :--- | :--- |
+| **Tanggal** | 2026-11-21 |
+| **Status** | Berlaku (sprint T-04 dan T-05; tiga pilihan disetujui pemilik 2026-11-21); isi klinis tetap draf |
+| **Diputuskan oleh** | Pemilik (usulan agent); daftar kata kunci darurat dan teks jantung menunggu dr. Enny |
+
+- **Urutan:** triase darurat, lalu pagar klaim, lalu pagar obat/kehamilan/kondisi pribadi, lalu skor kata kunci (ambang `MIN_SCORE` 2), lalu "belum yakin". Tidak pernah menebak. Kode di `src/lib/chat/engine.ts`; data di `triage.ts` dan `intents.ts`.
+- **Gejala jantung:** dijawab sebagai edukasi umum berstatus draf; `CHAT_CONFIG.heartEducation=false` mengubahnya menjadi rujukan saja. Triase darurat selalu jalan dan hanya menampilkan kalimat darurat bersama (119, 112), tanpa produk.
+- **Kata sehari-hari:** salah ketik ditoleransi satu huruf pada kata kunci 5+ huruf; kata yang berbeda arti ("tanya", "lemas", "heard", "badan") ada di `NEVER_A_TYPO` agar tidak dibaca sebagai kata kunci.
+- **Tombol:** mengambang di semua halaman kecuali `/cup/*`, tempat chat menjadi tab "Tanya" dengan cup yang dipindai sebagai konteks. Pesan hanya di memori; menutup panel menghapusnya.
+- **Ditolak:** model bahasa generatif atau embedding unduhan (lihat D-004).
+
 ## D-007: PWA offline dengan service worker tulisan sendiri (tanpa library)
 
 | | |

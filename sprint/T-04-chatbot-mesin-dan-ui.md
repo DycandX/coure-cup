@@ -1,7 +1,7 @@
 ---
 id: T-04
 title: Chatbot - mesin pencocok intent on-device dan UI chat
-status: todo
+status: done
 estimate: L
 depends_on: [T-03]
 ---
@@ -35,9 +35,9 @@ Pendekatan yang diusulkan (belum disetujui pemilik, lihat `DECISIONS.md` D-004):
 
 ## Kriteria selesai
 
-- [ ] Tidak ada permintaan jaringan saat chat dipakai (dicek di tab Network).
-- [ ] Setiap chip menghasilkan jawaban yang benar; 8 variasi pertanyaan bebas per topik (ID dan EN, termasuk salah ketik) cocok ke intent yang benar pada test.
-- [ ] Pertanyaan di luar cakupan menghasilkan jawaban "belum yakin" dan bukan jawaban acak.
-- [ ] Berfungsi di lebar 390, 768, dan 1440 px; skrip `scripts/e2e-check.mjs` diperluas dengan alur chat dan lulus.
-- [ ] Bahasa ID dan EN mengikuti pilihan aplikasi.
-- [ ] `npm run build`, `tsc`, `eslint`, dan `npm run test:run` bersih.
+- [x] Tidak ada permintaan jaringan saat chat dipakai (e2e menghitung permintaan fetch/xhr selama chat dipakai: 0; test statis melarang `fetch` dan penyimpanan di kode chat).
+- [x] Setiap chip menghasilkan jawaban yang benar; 8 variasi pertanyaan bebas per topik (ID dan EN, termasuk salah ketik) cocok ke intent yang benar pada test.
+- [x] Pertanyaan di luar cakupan menghasilkan jawaban "belum yakin" dan bukan jawaban acak (termasuk kata sehari-hari yang mirip kata kunci, seperti "tanya", "lemas", "heard").
+- [x] Berfungsi di lebar 390, 768, dan 1440 px (e2e 70/70 di ketiganya, termasuk chat saat offline); skrip `scripts/e2e-check.mjs` diperluas dengan alur chat dan lulus.
+- [x] Bahasa ID dan EN mengikuti pilihan aplikasi (balasan disimpan sebagai rujukan lalu dirender ulang pada bahasa yang aktif).
+- [x] `npm run build`, `tsc`, `eslint`, dan `npm run test:run` (403) bersih, 2026-11-21. Berkas: `src/lib/chat/{engine,intents,text}.ts`, `src/components/{ChatView,ChatLauncher}.tsx`.

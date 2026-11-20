@@ -11,7 +11,7 @@ Daftar pertanyaan siap kirim, lengkap dengan contoh jawaban dan perbandingan esa
 - [ ] **Bobot S (pilihan agent):** keluhan 0,1, pola makan asin naik ke 0,45. Setuju?
 - [ ] Teks edukasi dan teks manfaat produk (ditulis agent, termasuk angka pedoman WHO).
 - [ ] Ringkasan gejala jantung di `sprint/riset-chatbot.md` bagian 4.1: akurat dan pantas dipakai di chatbot? Perlu ditambah atau dikurangi?
-- [ ] Apakah chatbot boleh menjawab pertanyaan gejala jantung sama sekali, atau hanya merujuk ke tenaga kesehatan.
+- [ ] **Tinjau daftar kata kunci darurat** (`src/lib/chat/triage.ts`, 14 sinyal, ID dan EN) dan teks gejala jantung (`src/lib/chat/heart-info.ts`). Saat ini chatbot menjawab gejala jantung sebagai edukasi umum berstatus draf (usulan A9). Bila dr. Enny keberatan, ubah `CHAT_CONFIG.heartEducation` menjadi `false` di `src/lib/chat/config.ts`: topik itu lalu hanya merujuk ke tenaga kesehatan. Triase darurat tidak bisa dimatikan.
 - [x] Nomor darurat: 119 (Kemenkes) dan 112 (Komdigi), dicek ke situs resmi 2026-11-21 dan dipakai di wizard dan chat. Catatan: menurut portal Komdigi, layanan 112 belum aktif di semua kabupaten/kota.
 
 ## Tim desain / kemasan
@@ -32,7 +32,7 @@ Temuan dari gambar yang dikirim 2026-11-19 (dibaca dari gambar, perlu dicek di b
 
 - [x] Pendekatan chatbot berbasis aturan disetujui (B1, keputusan tim). D-004 berlaku.
 - [ ] Setuju mengganti istilah "indikasi minum" menjadi "untuk siapa / prioritas formulasi".
-- [ ] **Data seduh:** volume air, suhu, dan waktu tunggu per modul (belum ada di brief dan poster; dibutuhkan chatbot dan kemasan).
+- [ ] **Data seduh:** volume air, suhu, dan waktu tunggu per modul (belum ada di brief dan poster; dibutuhkan chatbot dan kemasan). Chatbot memakai kalimat "takaran masih dalam pengujian" sampai `BREW_DETAILS` di `src/lib/chat/knowledge.ts` diisi.
 - [ ] Boleh tidaknya foto dan nama anggota tim tampil di web (poster memuatnya; T-02 memotongnya).
 - [ ] Judul poster "Machine Learning-Assisted" vs web berbasis aturan: sepakati satu narasi di materi publik.
 - [x] Domain final `cuorecup.vercel.app` (diatur pemilik di Vercel 2026-11-21; `cuore-cup.vercel.app` dialihkan 307 ke sana). QR di `deliverables/qr/` dibuat ulang untuk domain ini.

@@ -1,7 +1,7 @@
 ---
 id: T-05
 title: Chatbot - pagar keamanan, rujukan darurat, dan test kepatuhan
-status: todo
+status: done
 estimate: M
 depends_on: [T-03]
 ---
@@ -36,7 +36,7 @@ Bagian jantung dari permintaan ("gejala dan keluhan penyakit jantung") adalah ed
 
 ## Kriteria selesai
 
-- [ ] Triase memuat semua frasa di set uji dan mengalahkan pencocokan intent lain.
-- [ ] Tidak ada jawaban yang lolos dari pemindaian frasa terlarang.
-- [ ] Test baru lulus bersama 70 test yang sudah ada; `tsc`, `eslint`, dan `npm run build` bersih.
-- [ ] Tidak ada panggilan jaringan dari kode chat.
+- [x] Triase memuat semua frasa di set uji (62 frasa ID dan EN, termasuk salah ketik) dan mengalahkan pencocokan intent lain. **Daftar kata kunci masih draf, belum ditinjau dr. Enny** (`src/lib/chat/triage.ts`).
+- [x] Tidak ada jawaban yang lolos dari pemindaian frasa terlarang (`chat.test.ts`, lebih dari 300 jawaban dipindai).
+- [x] Seluruh suite (403 test), `tsc`, `eslint`, dan `npm run build` bersih.
+- [x] Tidak ada panggilan jaringan dari kode chat (cek statis di test dan hitung permintaan di e2e).
