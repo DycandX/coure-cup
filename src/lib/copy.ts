@@ -133,7 +133,28 @@ export interface Copy {
     demoHint: string;
     demoLabel: string;
   };
-  qr: { backHome: string; scanned: (cup: string) => string; tabCheck: string; tabAbout: (cup: string) => string };
+  qr: {
+    backHome: string;
+    scanned: (cup: string) => string;
+    tabCheck: string;
+    tabAbout: (cup: string) => string;
+    tabAsk: string;
+  };
+  chat: {
+    open: string;
+    title: string;
+    intro: string;
+    chipsLabel: string;
+    inputLabel: string;
+    placeholder: string;
+    send: string;
+    you: string;
+    bot: string;
+    draftNote: string;
+    footerRule: string;
+    screeningCta: string;
+    emergencyLabel: string;
+  };
 }
 
 export const COPY: Record<Lang, Copy> = {
@@ -342,6 +363,22 @@ export const COPY: Record<Lang, Copy> = {
       scanned: (cup) => `Anda memindai ${cup}`,
       tabCheck: "Cek prioritas saya",
       tabAbout: (cup) => `Tentang ${cup}`,
+      tabAsk: "Tanya",
+    },
+    chat: {
+      open: "Tanya CUORE",
+      title: "Tanya jawab produk",
+      intro: "Pilih salah satu pertanyaan di bawah, atau ketik pertanyaan Anda.",
+      chipsLabel: "Pertanyaan cepat",
+      inputLabel: "Pertanyaan Anda",
+      placeholder: "Ketik pertanyaan tentang produk",
+      send: "Kirim",
+      you: "Anda",
+      bot: "Asisten",
+      draftNote: "Informasi ini masih draf dan menunggu tinjauan tenaga kesehatan.",
+      footerRule: "Asisten tanya-jawab berbasis aturan, bukan AI bebas. Pesan tidak disimpan dan tidak dikirim ke server.",
+      screeningCta: "Cek prioritas saya",
+      emergencyLabel: "Penting",
     },
   },
   en: {
@@ -549,6 +586,22 @@ export const COPY: Record<Lang, Copy> = {
       scanned: (cup) => `You scanned ${cup}`,
       tabCheck: "Check my priority",
       tabAbout: (cup) => `About ${cup}`,
+      tabAsk: "Ask",
+    },
+    chat: {
+      open: "Ask CUORE",
+      title: "Product Q&A",
+      intro: "Pick one of the questions below, or type your own.",
+      chipsLabel: "Quick questions",
+      inputLabel: "Your question",
+      placeholder: "Type a question about the product",
+      send: "Send",
+      you: "You",
+      bot: "Assistant",
+      draftNote: "This information is still a draft and is waiting for review by a health professional.",
+      footerRule: "A rule-based Q&A assistant, not a free-form AI. Messages are not saved and not sent to any server.",
+      screeningCta: "Check my priority",
+      emergencyLabel: "Important",
     },
   },
 };

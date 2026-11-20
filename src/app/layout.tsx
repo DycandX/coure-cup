@@ -1,6 +1,7 @@
 ﻿import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import "./globals.css";
+import { ChatLauncher } from "@/components/ChatLauncher";
 import { LangProvider } from "@/components/LangProvider";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 
@@ -24,7 +25,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} h-full antialiased`}>
       <body className="min-h-full">
-        <LangProvider>{children}</LangProvider>
+        <LangProvider>
+          {children}
+          <ChatLauncher />
+        </LangProvider>
         <ServiceWorkerRegister />
       </body>
     </html>

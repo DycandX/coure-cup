@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { BY_SLUG, PRODUCTS } from "@/lib/products";
+import { ChatView } from "./ChatView";
 import { useLang } from "./LangProvider";
 import { LangToggle } from "./ui";
 import { ProductDetail } from "./ProductDetail";
@@ -15,13 +16,14 @@ import { Wizard } from "./Wizard";
 export function CupPage({ slug }: { slug: keyof typeof BY_SLUG }) {
   const product = BY_SLUG[slug];
   const { t, lang } = useLang();
-  const [tab, setTab] = useState<"check" | "about">("check");
+  const [tab, setTab] = useState<"check" | "about" | "ask">("check");
   const [aboutId, setAboutId] = useState(product.id);
   const about = PRODUCTS[aboutId];
 
   const tabs = [
     { id: "check" as const, label: t.qr.tabCheck },
     { id: "about" as const, label: t.qr.tabAbout(about.name) },
+    { id: "ask" as const, label: t.qr.tabAsk },
   ];
 
   return (
@@ -69,6 +71,16 @@ export function CupPage({ slug }: { slug: keyof typeof BY_SLUG }) {
         </div>
         <div hidden={tab !== "about"}>
           <ProductDetail product={about} wide />
+        </div>
+        <div hidden={tab !== "ask"}>
+          <ChatView
+            module={product.id}
+            listClassName="min-h-48 max-h-[55dvh]"
+            onStartScreening={() => {
+              setTab("check");
+              window.scrollTo({ top: 0 });
+            }}
+          />
         </div>
       </main>
     </div>

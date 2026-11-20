@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { PRODUCT_LIST, PRODUCTS } from "@/lib/products";
 import type { ModuleId } from "@/lib/recommender";
+import { START_SCREENING_EVENT } from "./ChatLauncher";
 import { useLang } from "./LangProvider";
 import { Card, Disclaimer, LangToggle, Sheet } from "./ui";
 import { ProductDetail } from "./ProductDetail";
@@ -37,6 +38,17 @@ export function AppShell() {
     setScreen(s);
     window.scrollTo({ top: 0 });
   }, []);
+
+  // The chat can send the user to the screening: by event when already here, by #check from other pages.
+  useEffect(() => {
+    const start = () => go("wizard");
+    window.addEventListener(START_SCREENING_EVENT, start);
+    if (window.location.hash === "#check") {
+      window.history.replaceState({ screen: "landing" }, "", window.location.pathname);
+      start();
+    }
+    return () => window.removeEventListener(START_SCREENING_EVENT, start);
+  }, [go]);
 
   const closeTopic = useCallback(() => setTopic(null), []);
   const closeProduct = useCallback(() => setProduct(null), []);

@@ -285,6 +285,110 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
   await click(page, main(page).getByRole("button", { name: /Check module priority/ }));
   check("About link hidden in the wizard", (await page.getByRole("link", { name: "About" }).count()) === 0);
 
+  // 10b. Chat (T-04, T-05): rule-based Q&A, emergency reply, claim guard, no network, nothing kept
+  {
+    const chatPage = await newPage();
+    await chatPage.goto(BASE);
+    await sleep(2000); // let link prefetching settle so only the chat's own requests are counted
+    const calls = [];
+    chatPage.on("request", (r) => {
+      if (["fetch", "xhr", "websocket", "ping", "eventsource"].includes(r.resourceType())) calls.push(r.url());
+    });
+    const dlg = chatPage.getByRole("dialog", { name: "Product Q&A" });
+    const reply = () => dlg.getByRole("log").innerText();
+    const ask = async (q) => {
+      await dlg.getByLabel("Your question").fill(q);
+      await click(chatPage, dlg.getByRole("button", { name: "Send", exact: true }));
+    };
+
+    check("floating chat button on the start page", (await chatPage.getByRole("button", { name: "Ask CUORE" }).count()) === 1);
+    await click(chatPage, chatPage.getByRole("button", { name: "Ask CUORE" }));
+    check("chat opens as a dialog with the five quick topics", (await dlg.count()) === 1 && (await dlg.getByRole("group", { name: "Quick questions" }).getByRole("button").count()) === 5);
+    check("no horizontal scroll with the chat open", await noOverflow(chatPage));
+
+    await click(chatPage, dlg.getByRole("button", { name: "How to prepare" }));
+    t = await reply();
+    check("chip: brew answer, amounts marked as still being tested", /Pour the 35 g Universal Base/.test(t) && /still being tested/.test(t), t.slice(-200));
+
+    await ask("is there soy in it");
+    t = await reply();
+    check("typed question reaches the allergen answer", /soy/i.test(t) && /Allergens and points to note/.test(t), t.slice(-200));
+
+    await ask("does it lower cholesterol");
+    t = await reply();
+    check("claim question gets the fixed non-claim answer", /CUORE is a food, not a medicine/.test(t), t.slice(-200));
+
+    await ask("asdfgh");
+    t = await reply();
+    check("unrelated text: says it is not sure", /I am not sure what you mean/.test(t), t.slice(-200));
+
+    await ask("I am pregnant, can I eat it");
+    t = await reply();
+    check("pregnancy question goes to a health professional", /needs to be answered by a health professional/.test(t), t.slice(-200));
+
+    await ask("chest pain");
+    t = await reply();
+    check("emergency message names 119 and 112", /119/.test(t) && /112/.test(t), t.slice(-300));
+    await sleep(700); // smooth scroll
+    const startVisible = await dlg.getByRole("log").evaluate((el) => el.lastElementChild.getBoundingClientRect().top >= el.getBoundingClientRect().top - 1);
+    check("the emergency message is shown from its first line", startVisible);
+    const lastBubble = (await dlg.getByRole("log").locator("> div").last().innerText());
+    check("emergency reply has no product talk", !/CUORE|S-CUP|M-CUP|L-CUP/.test(lastBubble), lastBubble);
+    check("emergency reply offers no follow-up chips", (await dlg.getByRole("group", { name: "Quick questions" }).count()) === 0);
+
+    check("no network request was made while using the chat", calls.length === 0, calls.join(", "));
+
+    await ask("who is this module for");
+    check("screening button shown after a who-is-it-for answer", (await dlg.getByRole("button", { name: "Check my priority" }).count()) === 1);
+    await click(chatPage, dlg.getByRole("button", { name: "Check my priority" }));
+    await sleep(500);
+    check("screening button closes the chat and opens the wizard", (await dlg.count()) === 0 && /Data consent/.test(await main(chatPage).innerText()));
+
+    // Reopen: the earlier conversation is gone
+    await click(chatPage, chatPage.getByRole("button", { name: "Ask CUORE" }));
+    t = await reply();
+    check("closing the chat erased the conversation", !/chest pain|not a medicine/i.test(t), t.slice(0, 160));
+    await chatPage.keyboard.press("Escape");
+    await sleep(500);
+    check("Escape closes the chat and focus returns to its button", (await dlg.count()) === 0 && (await chatPage.evaluate(() => document.activeElement?.textContent?.trim())) === "Ask CUORE");
+
+    // From another page the screening button goes to the home page wizard
+    await chatPage.goto(`${BASE}/about`);
+    await sleep(1200);
+    await click(chatPage, chatPage.getByRole("button", { name: "Ask CUORE" }));
+    await ask("who is this module for");
+    await click(chatPage, dlg.getByRole("button", { name: "Check my priority" }));
+    await chatPage.waitForURL((u) => u.pathname === "/");
+    await sleep(900);
+    check("from /about the screening button opens the wizard on the home page", /Data consent/.test(await main(chatPage).innerText()));
+
+    // QR page: Ask tab knows the scanned cup; no floating button there
+    const cupPage = await newPage();
+    await cupPage.goto(`${BASE}/cup/l`);
+    await sleep(1200);
+    check("no floating chat button on /cup/l", (await cupPage.getByRole("button", { name: "Ask CUORE" }).count()) === 0);
+    await click(cupPage, cupPage.getByRole("tab", { name: "Ask" }));
+    await click(cupPage, main(cupPage).getByRole("button", { name: "Allergens and points to note" }));
+    t = await main(cupPage).innerText();
+    check("Ask tab uses the scanned cup as context (L-CUP cautions)", /swells/i.test(t) && /L-CUP/.test(t), t.slice(0, 200));
+    check("no horizontal scroll on the Ask tab", await noOverflow(cupPage));
+    await main(cupPage).getByLabel("Your question").fill("dada saya sakit");
+    await click(cupPage, main(cupPage).getByRole("button", { name: "Send", exact: true }));
+    check("Ask tab: emergency message also works there", /119/.test(await main(cupPage).innerText()));
+
+    // Indonesian: chips and answers follow the app language
+    const idPage = await newPage();
+    await idPage.goto(BASE);
+    await sleep(1200);
+    await click(idPage, idPage.getByRole("button", { name: /Ganti ke Bahasa Indonesia/ }));
+    await click(idPage, idPage.getByRole("button", { name: "Tanya CUORE" }));
+    const idDlg = idPage.getByRole("dialog", { name: "Tanya jawab produk" });
+    await click(idPage, idDlg.getByRole("button", { name: "Cara menyeduh" }));
+    t = await idDlg.getByRole("log").innerText();
+    check("Indonesian: chip answers in Indonesian", /Cara menyiapkan/.test(t) && /Tuang Universal Base/.test(t), t.slice(-200));
+    check("Indonesian: footer says rule-based, not free-form AI", /berbasis aturan, bukan AI bebas/.test(await idDlg.innerText()));
+  }
+
   // 11. Offline (T-06): after one visit, the QR page, the wizard and the other pages work with no network.
   // Keep this last: for a local run it stops the server, so nothing can answer and the test is real.
   {
@@ -344,6 +448,15 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
     await op.goto(BASE);
     await sleep(1200);
     check("offline: start page opens", (await op.getByRole("button", { name: "Start" }).count()) === 1);
+    await click(op, op.getByRole("button", { name: "Ask CUORE" }));
+    const offDlg = op.getByRole("dialog", { name: "Product Q&A" });
+    await click(op, offDlg.getByRole("button", { name: "Allergens and points to note" }));
+    await offDlg.getByLabel("Your question").fill("chest pain");
+    await click(op, offDlg.getByRole("button", { name: "Send", exact: true }));
+    t = await offDlg.getByRole("log").innerText();
+    check("offline: chat answers a chip and shows the emergency message", /Soy|soy/.test(t) && /119/.test(t), t.slice(-200));
+    await op.keyboard.press("Escape");
+    await sleep(500);
     await click(op, op.getByRole("link", { name: "About" }));
     await sleep(800);
     t = await main(op).innerText();
