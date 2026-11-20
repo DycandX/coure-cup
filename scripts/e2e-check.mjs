@@ -261,6 +261,21 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
     String(focusedName),
   );
 
+  // 9b. Model card: reachable from /about, shows the draft status and the rule numbers, fits the screen
+  page = await newPage();
+  await page.goto(`${BASE}/about`);
+  await sleep(1200);
+  await click(page, main(page).getByRole("link", { name: /View the model card/ }));
+  await page.waitForURL(/\/model$/);
+  await sleep(600);
+  t = await main(page).innerText();
+  check("/about links to the model card", /model card/i.test(t), t.slice(0, 120));
+  check("model card shows draft status and Stage B", /draft/i.test(t) && /Stage B/.test(t));
+  check("model card shows the blood pressure and BMI numbers", /140\/90 mmHg/.test(t) && /27\.5/.test(t) && /23\.0/.test(t));
+  check("model card says no ML model has been trained", /No machine learning model has been trained/.test(t));
+  check("no horizontal scroll on /model", await noOverflow(page));
+  check("model card shows the disclaimer", /Decision-support tool, not a diagnosis\./.test(await page.locator("body").innerText()));
+
   // 10. About link is hidden during the wizard (leaving would drop answers)
   page = await newPage();
   await page.goto(BASE);

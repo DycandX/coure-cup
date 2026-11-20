@@ -166,6 +166,13 @@ export function AboutView() {
           {a.mlNotice}
         </p>
 
+        <Link
+          href="/model"
+          className="inline-flex min-h-12 items-center rounded-full border-2 border-accent px-5 text-base font-bold text-accent"
+        >
+          {a.modelCardLink} →
+        </Link>
+
         <div className="grid gap-6 md:grid-cols-2 md:items-start">
           <section className="rounded-3xl border-2 border-line bg-surface p-5 shadow-sm md:p-6">
             <h2 className="text-xl font-bold text-accent-ink md:text-2xl">{a.summaryTitle}</h2>

@@ -36,6 +36,7 @@ export interface Copy {
     title: string;
     subtitle: string;
     mlNotice: string;
+    modelCardLink: string;
     summaryTitle: string;
     bullets: string[];
     posterTitle: string;
@@ -165,6 +166,7 @@ export const COPY: Record<Lang, Copy> = {
         "Ringkasan konsep bubur instan gurih modular CUORE dari poster 5th International Youth Conference (IYC) 2026.",
       mlNotice:
         "Versi web saat ini berbasis aturan, model ML belum dilatih (memakai ambang WHO dan arsitektur siap ML / ML-ready).",
+      modelCardLink: "Lihat model card: cara kerja dan batas alat skrining",
       summaryTitle: "Ringkasan poster",
       bullets: [
         "CUORE ingin menjembatani anjuran umum seperti kurangi garam dan perbanyak serat dengan pangan gurih yang familiar dan terjangkau, sebagai inovasi pangan dan alat bantu keputusan.",
@@ -371,6 +373,7 @@ export const COPY: Record<Lang, Copy> = {
         "Summary of the CUORE modular savoury instant porridge concept from the 5th International Youth Conference (IYC) 2026 poster.",
       mlNotice:
         "The current web version is rule-based (WHO thresholds) and ML-ready; an ML model has not been trained yet.",
+      modelCardLink: "View the model card: how the screening tool works and its limits",
       summaryTitle: "Poster summary",
       bullets: [
         "CUORE aims to turn general advice such as eating less salt and more fibre into a familiar, affordable savoury food, as a food innovation and decision-support concept.",

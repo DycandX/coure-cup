@@ -13,6 +13,7 @@ import {
   REASON_TEXT,
 } from "./recommender";
 import { COPY } from "./copy";
+import { buildModelCard } from "./model-card";
 import { FORBIDDEN, stripNegatedDisclaimer, strings } from "./compliance-rules";
 import {
   BASE_COMPOSITION,
@@ -56,6 +57,8 @@ const userFacingCopy = () => [
   ...strings(GENERAL_NOTE),
   ...strings(ESTIMATE_NOTE),
   ...strings(COPY),
+  ...strings(buildModelCard("id")),
+  ...strings(buildModelCard("en")),
 ];
 
 describe("language compliance", () => {
