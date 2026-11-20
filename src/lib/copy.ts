@@ -86,6 +86,7 @@ export interface Copy {
     yes: string;
     no: string;
     bodyTitle: string;
+    bodyHint: string;
     age: string;
     sex: string;
     female: string;
@@ -116,6 +117,8 @@ export interface Copy {
     freq: [string, string, string, string];
     food: Record<FoodKey, string>;
     errorIncomplete: string;
+    errorBody: string;
+    errorBodyPair: string;
     errorBp: string;
     resultTitle: string;
     seeProduct: string;
@@ -256,6 +259,7 @@ export const COPY: Record<Lang, Copy> = {
       yes: "Ya",
       no: "Tidak",
       bodyTitle: "Data tubuh",
+      bodyHint: "Isi lingkar pinggang, atau tinggi dan berat badan. Cukup salah satu; boleh juga keduanya.",
       age: "Usia (tahun)",
       sex: "Jenis kelamin",
       female: "Perempuan",
@@ -280,7 +284,7 @@ export const COPY: Record<Lang, Copy> = {
         familyDiabetes: "Keluarga: diabetes",
       },
       optionalLab: "Opsional: hasil laboratorium",
-      optionalLabHint: "Kosongkan bila tidak punya. Hasil ini membuat saran lebih rinci.",
+      optionalLabHint: "Isi bila punya hasil lab; kosongkan bila tidak punya. Hasil ini membuat saran lebih rinci.",
       ldl: "LDL (mg/dL)",
       hdl: "HDL (mg/dL)",
       tg: "Trigliserida (mg/dL)",
@@ -312,6 +316,8 @@ export const COPY: Record<Lang, Copy> = {
         mealRegularity: "Makan pada waktu yang teratur",
       },
       errorIncomplete: "Mohon lengkapi data yang wajib diisi.",
+      errorBody: "Isi lingkar pinggang, atau tinggi dan berat badan.",
+      errorBodyPair: "Isi tinggi dan berat badan bersama-sama, atau kosongkan keduanya.",
       errorBp: "Tekanan darah: isi kedua ukuran, atau kosongkan semuanya.",
       resultTitle: "Hasil",
       seeProduct: "Lihat produk",
@@ -459,6 +465,7 @@ export const COPY: Record<Lang, Copy> = {
       yes: "Yes",
       no: "No",
       bodyTitle: "Body data",
+      bodyHint: "Enter your waist circumference, or your height and weight. One of the two is enough; both is fine too.",
       age: "Age (years)",
       sex: "Sex",
       female: "Female",
@@ -483,7 +490,7 @@ export const COPY: Record<Lang, Copy> = {
         familyDiabetes: "Family: diabetes",
       },
       optionalLab: "Optional: laboratory results",
-      optionalLabHint: "Leave blank if you do not have them. They make the suggestion more detailed.",
+      optionalLabHint: "Fill in only if you have lab results; otherwise leave blank. They make the suggestion more detailed.",
       ldl: "LDL (mg/dL)",
       hdl: "HDL (mg/dL)",
       tg: "Triglycerides (mg/dL)",
@@ -515,6 +522,8 @@ export const COPY: Record<Lang, Copy> = {
         mealRegularity: "Eat at regular times",
       },
       errorIncomplete: "Please complete the required fields.",
+      errorBody: "Enter your waist circumference, or your height and weight.",
+      errorBodyPair: "Enter height and weight together, or leave both blank.",
       errorBp: "Blood pressure: fill in both readings, or leave all of them blank.",
       resultTitle: "Result",
       seeProduct: "See product",

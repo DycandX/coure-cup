@@ -183,14 +183,12 @@ export function Wizard({
   const validate = (s: number): string | null => {
     if (s === 0) return consent && SAFETY_KEYS.every((k) => safety[k] !== undefined) ? null : w.errorIncomplete;
     if (s === 1) {
-      if (
-        num(age) === undefined ||
-        sex === undefined ||
-        num(height) === undefined ||
-        num(weight) === undefined ||
-        num(waist) === undefined
-      )
-        return w.errorIncomplete;
+      if (num(age) === undefined || sex === undefined) return w.errorIncomplete;
+      // Body size: waist alone, or height + weight (BMI), is enough (essay Tier 1, D-006).
+      const hasHeight = num(height) !== undefined;
+      const hasWeight = num(weight) !== undefined;
+      if (hasHeight !== hasWeight) return w.errorBodyPair;
+      if (num(waist) === undefined && !(hasHeight && hasWeight)) return w.errorBody;
       return bpPartial ? w.errorBp : null;
     }
     return FOOD_KEYS.every((k) => food[k] !== undefined) ? null : w.errorIncomplete;
@@ -354,6 +352,7 @@ export function Wizard({
                   onChange={setSex}
                 />
               </fieldset>
+              <p className="text-sm text-muted">{w.bodyHint}</p>
               <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                 <NumberField label={w.height} value={height} onChange={setHeight} />
                 <NumberField label={w.weight} value={weight} onChange={setWeight} />
@@ -408,7 +407,10 @@ export function Wizard({
                 <summary className="min-h-10 cursor-pointer text-base font-bold">{w.optionalLab}</summary>
                 <p className="my-2 text-sm text-muted">{w.optionalLabHint}</p>
                 <div className="grid grid-cols-2 gap-3">
-                  {/* LDL/HDL/triglyceride fields stay hidden until the physician supplies cut-offs (DECISIONS D-003). */}
+                  {/* Tier 2 lipids (NCEP ATP III draft cut-offs, DECISIONS D-006); all optional. */}
+                  <NumberField label={w.ldl} value={lab.ldl} onChange={(v) => setLab((l) => ({ ...l, ldl: v }))} />
+                  <NumberField label={w.hdl} value={lab.hdl} onChange={(v) => setLab((l) => ({ ...l, hdl: v }))} />
+                  <NumberField label={w.tg} value={lab.tg} onChange={(v) => setLab((l) => ({ ...l, tg: v }))} />
                   <NumberField label={w.glucose} value={lab.glu} onChange={(v) => setLab((l) => ({ ...l, glu: v }))} />
                 </div>
               </details>

@@ -180,6 +180,27 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
   await next(page);
   check("partial blood pressure -> error, stays on step 2", /fill in both readings/i.test(await text(page)));
 
+  // 6b. Body size: waist alone is enough; height without weight is not (team answer A7)
+  page = await newPage();
+  await page.goto(`${BASE}/cup/s`);
+  await sleep(1200);
+  await step1(page);
+  await type(page, 0, "45");
+  await main(page).getByRole("radio", { name: "Female" }).click();
+  await type(page, 3, "82");
+  await next(page);
+  check("waist without height/weight -> step 3", /Step 3 of 3/.test(await text(page)));
+
+  page = await newPage();
+  await page.goto(`${BASE}/cup/s`);
+  await sleep(1200);
+  await step1(page);
+  await type(page, 0, "45");
+  await main(page).getByRole("radio", { name: "Female" }).click();
+  await type(page, 1, "160");
+  await next(page);
+  check("height without weight -> asks for both", /height and weight together/i.test(await text(page)));
+
   // 7. Demo data and language toggle
   page = await newPage();
   await page.goto(BASE);
