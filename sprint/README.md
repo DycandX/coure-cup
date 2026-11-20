@@ -13,8 +13,10 @@ Satu berkas = satu task. Hal yang masih perlu dikonfirmasi ke tim **tidak** dima
 | [T-03](T-03-chatbot-basis-pengetahuan.md) | Chatbot: susun basis pengetahuan (5 topik, ID/EN) | M | none |
 | [T-04](T-04-chatbot-mesin-dan-ui.md) | Chatbot: mesin pencocok intent on-device dan UI chat | L | T-03 |
 | [T-05](T-05-chatbot-guardrail-dan-test.md) | Chatbot: pagar keamanan, rujukan darurat, dan test kepatuhan | M | T-03 (dikerjakan bersama T-04) |
+| [T-06](T-06-pwa-offline.md) | Web bisa dibuka offline setelah kunjungan pertama (PWA) | M | none |
+| [T-07](T-07-model-card.md) | Halaman model card singkat | S | none |
 
-Perkiraan ukuran (S/M/L) adalah tebakan saya dari ukuran kode yang ada, bukan hasil ukur. Urutan disarankan: T-03, lalu T-04 dan T-05 berjalan berdampingan. T-01 dan T-02 bebas dikerjakan kapan saja.
+Perkiraan ukuran (S/M/L) adalah tebakan saya dari ukuran kode yang ada, bukan hasil ukur. Status 2026-11-21: T-01, T-02 selesai dan tayang; T-03 selesai. T-04 dan T-05 tidak lagi terhalang (D-004 berlaku, keputusan tim B1). T-06 dan T-07 berasal dari jawaban tim B5 (prioritas demo).
 
 ## Berkas pendukung
 

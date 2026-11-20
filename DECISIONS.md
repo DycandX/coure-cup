@@ -9,12 +9,25 @@ Aturan:
 
 ---
 
+## D-006: Jawaban tim diterapkan ke rule layer, wizard, dan konten (usulan, menunggu dr. Enny)
+
+| | |
+| :--- | :--- |
+| **Tanggal** | 2026-11-21 |
+| **Status** | Berlaku atas instruksi pemilik; angka klinis tetap **draf** sampai dr. Enny mengonfirmasi |
+| **Diputuskan oleh** | Pemilik, dari dokumen "Jawaban untuk Pertanyaan Tim CUORE" (A1-A7 berstatus Usulan; B1 Keputusan tim; A10 Terverifikasi) |
+
+- **Diterapkan:** A1 BMI titik Asia (23,0-27,4 skor 0,5; 27,5 ke atas skor 1). A2 tingkat tengah TD 130-139/85-89 dihapus, hanya 140/90 ke atas. A3 kelas lipid NCEP ATP III, HDL rendah <40 untuk pria dan wanita. A4 kolom LDL/HDL/TG di wizard aktif sebagai input opsional. A5 keluhan maksimal 0,1 dan tidak pernah menjadi satu-satunya alasan. A6 TD tetap minimal 2 ukuran (tidak berubah). A7 cukup lingkar pinggang atau tinggi + berat. A10 kalimat darurat bersama `EMERGENCY_CALL` (119 dan 112) di wizard dan chat. C2 peringatan tambahan L-CUP. C3 lemak jenuh, kalium, kalsium, zat besi dari Tabel 8 esai.
+- **Pilihan agent (perlu dikonfirmasi):** bobot keluhan S turun dari 0,2 ke 0,1; sisa 0,1 dipindah ke pola makan asin (0,35 menjadi 0,45). Demo (45 th, 138/88) tetap S-CUP, tetapi kini dari pola makan asin dan riwayat keluarga, bukan dari TD 138/88.
+- **Tidak diubah:** kalimat web "Rule-based (WHO thresholds), ML-ready" (B3), meski ambang lipid kini dari NCEP ATP III, bukan WHO.
+- **Menggantikan:** bagian BMI, TD tingkat tengah, dan HDL wanita pada `D-002`, `D-003`, `D-005`.
+
 ## D-005: Ambang rule layer dikonfirmasi tim (sebagian)
 
 | | |
 | :--- | :--- |
 | **Tanggal** | 2026-11-19 |
-| **Status** | Berlaku sebagian; tiga hal masih terbuka (di bawah) |
+| **Status** | Berlaku sebagian; tiga hal terbuka ditutup sementara oleh `D-006` (draf) |
 | **Diputuskan oleh** | Konfirmasi tim (dr. Enny, disampaikan lewat pemilik; kutipan sumber dari tim, belum saya buka ulang) |
 
 - **Dikonfirmasi:** Tekanan darah boleh menjadi input opsional dan dipakai di modul S. Hipertensi mulai ≥140 sistolik atau ≥90 diastolik (WHO, pedoman hipertensi 2021). Lingkar pinggang Asia ≥90 cm pria dan ≥80 cm wanita (WHO Expert Consultation 2011; WHO/IASO/IOTF 2000). Gula puasa: diabetes ≥126 mg/dL, gangguan glukosa puasa 110-125 (WHO/IDF 2006). LDL dan trigliserida: WHO tidak menetapkan ambang; rujukannya ESC/EAS 2019 dan NCEP ATP III.
@@ -22,12 +35,12 @@ Aturan:
 - **Terbuka (perlu jawaban tim):** (1) BMI: batas WHO 25/30 dan titik Asia 23,0/27,5, kode masih ≥25. (2) Tingkat 130-139/85-89 (skor 0,4) tidak disebut pedoman WHO 2021; pertahankan atau hapus. (3) Angka lipid final dan apakah kolom LDL/HDL/TG di wizard diaktifkan lagi.
 - **Menggantikan:** menyempurnakan `D-002` dan `D-003`; keduanya tetap berlaku untuk bagian yang tidak disebut di sini.
 
-## D-004: Chatbot tanya-jawab produk berbasis aturan, on-device (diusulkan)
+## D-004: Chatbot tanya-jawab produk berbasis aturan, on-device
 
 | | |
 | :--- | :--- |
 | **Tanggal** | 2026-11-19 |
-| **Status** | Diusulkan (menunggu persetujuan pemilik; konten jantung menunggu dr. Enny) |
+| **Status** | Berlaku (keputusan tim B1, 2026-11-21); konten jantung tetap draf sampai dicek dr. Enny |
 | **Diputuskan oleh** | Usulan agent (Claude Sonnet 5.5) dari permintaan tim; belum disetujui |
 
 - **Konteks:** Tim meminta chatbot untuk cara seduh, alergen, siapa yang boleh minum, indikasi minum, dan gejala jantung. Web belum punya chatbot; wizard skrining adalah formulir.
