@@ -8,6 +8,7 @@ import type { ModuleId } from "@/lib/recommender";
 import { START_SCREENING_EVENT } from "./ChatLauncher";
 import { useLang } from "./LangProvider";
 import { Card, Disclaimer, LangToggle, Sheet } from "./ui";
+import { AboutCuore } from "./AboutCuore";
 import { ProductDetail } from "./ProductDetail";
 import { Wizard } from "./Wizard";
 
@@ -25,6 +26,7 @@ export function AppShell() {
   const [screen, setScreen] = useState<Screen>("landing");
   const [topic, setTopic] = useState<string | null>(null);
   const [product, setProduct] = useState<ModuleId | null>(null);
+  const [whatIsOpen, setWhatIsOpen] = useState(false);
 
   // Keep the phone's back button inside the app.
   useEffect(() => {
@@ -52,6 +54,7 @@ export function AppShell() {
 
   const closeTopic = useCallback(() => setTopic(null), []);
   const closeProduct = useCallback(() => setProduct(null), []);
+  const closeWhatIs = useCallback(() => setWhatIsOpen(false), []);
 
   const activeTopic = t.education.topics.find((x) => x.id === topic);
 
@@ -110,6 +113,9 @@ export function AppShell() {
               <h1 className="text-3xl font-extrabold text-accent-ink md:col-span-2 md:text-4xl">{t.home.title}</h1>
               <div className="md:col-span-2">
                 <Card title={t.home.wizard.title} desc={t.home.wizard.desc} accent onClick={() => go("wizard")} />
+              </div>
+              <div className="md:col-span-2">
+                <Card title={t.home.whatIs.title} desc={t.home.whatIs.desc} onClick={() => setWhatIsOpen(true)} />
               </div>
               <Card title={t.home.products.title} desc={t.home.products.desc} onClick={() => go("products")} />
               <Card title={t.home.education.title} desc={t.home.education.desc} onClick={() => go("education")} />
@@ -174,6 +180,16 @@ export function AppShell() {
         <div className="space-y-3 text-lg">
           {activeTopic?.body.map((para) => <p key={para}>{para}</p>)}
         </div>
+        <Disclaimer className="mt-6" />
+      </Sheet>
+
+      <Sheet open={whatIsOpen} onClose={closeWhatIs} title={t.home.whatIs.title}>
+        <AboutCuore
+          onStartScreening={() => {
+            setWhatIsOpen(false);
+            go("wizard");
+          }}
+        />
         <Disclaimer className="mt-6" />
       </Sheet>
 

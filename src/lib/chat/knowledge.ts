@@ -1,3 +1,4 @@
+import { buildAboutCuore } from "../about-cuore";
 import { DISCLAIMER, EXCLUSION_TEXT } from "../recommender/templates";
 import type { Lang, ModuleId } from "../recommender/types";
 import {
@@ -79,6 +80,25 @@ const SCREENING_CTA: Record<Lang, string> = {
 // ---- Entries ---------------------------------------------------------------------------
 
 const ENTRIES: KnowledgeEntry[] = [
+  {
+    id: "about.cuore",
+    chip: T("Apa itu CUORE cup?", "What is a CUORE cup?"),
+    moduleScope: "all",
+    // Same content as the home panel and the About page (src/lib/about-cuore.ts).
+    answer: (lang) => {
+      const a = buildAboutCuore(lang);
+      return [
+        a.intro,
+        a.portion,
+        ...a.modules.map((m) => `${m.name} (${m.tagline}): ${m.focus}`),
+        a.notes[0],
+        SCREENING_CTA[lang],
+      ];
+    },
+    followUps: ["brew.how", "compare.modules", "who.priority"],
+    source: "product",
+    status: "draft",
+  },
   {
     id: "brew.how",
     chip: T("Cara menyeduh", "How to prepare"),
@@ -280,7 +300,7 @@ const ENTRIES: KnowledgeEntry[] = [
         ? "Saya belum yakin maksud pertanyaan Anda. Coba pilih salah satu topik di bawah, atau tanyakan ke tenaga kesehatan bila ini soal kesehatan Anda."
         : "I am not sure what you mean. Try one of the topics below, or ask a health professional if this is about your own health.",
     ],
-    followUps: ["brew.how", "allergens", "who.can", "who.priority", "heart.symptoms"],
+    followUps: ["about.cuore", "brew.how", "allergens", "who.can", "who.priority", "heart.symptoms"],
     source: "policy",
     status: "draft",
   },
@@ -290,8 +310,8 @@ export const KNOWLEDGE: Record<IntentId, KnowledgeEntry> = Object.fromEntries(
   ENTRIES.map((e) => [e.id, e]),
 ) as Record<IntentId, KnowledgeEntry>;
 
-/** Quick-reply chips shown first (the five topics the team asked for). */
-export const PRIMARY_CHIPS: IntentId[] = ["brew.how", "allergens", "who.can", "who.priority", "heart.symptoms"];
+/** Quick-reply chips shown first: what CUORE is, then the five topics the team asked for. */
+export const PRIMARY_CHIPS: IntentId[] = ["about.cuore", "brew.how", "allergens", "who.can", "who.priority", "heart.symptoms"];
 
 export function renderAnswer(id: IntentId, lang: Lang, ctx?: AnswerContext): ChatAnswer {
   const e = KNOWLEDGE[id];

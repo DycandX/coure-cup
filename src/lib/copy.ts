@@ -30,6 +30,7 @@ export interface Copy {
     products: { title: string; desc: string };
     wizard: { title: string; desc: string };
     about: { title: string; desc: string };
+    whatIs: { title: string; desc: string };
   };
   about: {
     nav: string;
@@ -179,6 +180,7 @@ export const COPY: Record<Lang, Copy> = {
       products: { title: "Produk", desc: "Kenali S-CUP, M-CUP, dan L-CUP." },
       wizard: { title: "Cek prioritas modul", desc: "3 langkah singkat, diproses di perangkat Anda." },
       about: { title: "Tentang & Poster", desc: "Poster ilmiah 5th IYC 2026 dan ringkasan konsep CUORE." },
+      whatIs: { title: "Apa itu CUORE cup?", desc: "Kenali produknya: isi porsi, cara kerja, dan tiga modul." },
     },
     about: {
       nav: "Tentang",
@@ -402,6 +404,7 @@ export const COPY: Record<Lang, Copy> = {
       products: { title: "Products", desc: "Get to know S-CUP, M-CUP and L-CUP." },
       wizard: { title: "Check module priority", desc: "3 short steps, processed on your device." },
       about: { title: "About & Poster", desc: "5th IYC 2026 scientific poster and CUORE concept summary." },
+      whatIs: { title: "What is a CUORE cup?", desc: "Get to know the product: the portion, how it works and the three modules." },
     },
     about: {
       nav: "About",

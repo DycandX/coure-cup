@@ -7,6 +7,7 @@ import type { Lang, ModuleId } from "../recommender/types";
  */
 
 export const INTENT_IDS = [
+  "about.cuore",
   "brew.how",
   "allergens",
   "caution.l",

@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AboutCuore } from "@/components/AboutCuore";
 import { useLang } from "@/components/LangProvider";
 import { Disclaimer, LangToggle } from "@/components/ui";
 
@@ -10,6 +12,7 @@ const ZOOM_STEPS = [1, 1.75, 2.5] as const;
 
 export function AboutView() {
   const { t } = useLang();
+  const router = useRouter();
   const a = t.about;
   const reducedMotion = useReducedMotion();
 
@@ -161,6 +164,16 @@ export function AboutView() {
           <h1 className="text-3xl font-extrabold text-accent-ink md:text-4xl">{a.title}</h1>
           <p className="mt-2 text-base text-muted md:text-lg">{a.subtitle}</p>
         </div>
+
+        <section
+          aria-labelledby="about-what"
+          className="rounded-3xl border-2 border-line bg-surface p-5 shadow-sm md:p-6"
+        >
+          <h2 id="about-what" className="mb-4 text-2xl font-extrabold text-accent-ink md:text-3xl">
+            {t.home.whatIs.title}
+          </h2>
+          <AboutCuore onStartScreening={() => router.push("/#check")} />
+        </section>
 
         <p className="rounded-2xl border-2 border-accent bg-accent-soft p-4 text-base font-semibold text-accent-ink">
           {a.mlNotice}

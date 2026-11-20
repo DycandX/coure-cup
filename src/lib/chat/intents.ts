@@ -13,6 +13,7 @@ export const MIN_SCORE = 2;
 
 /** Order matters only for ties: earlier wins. */
 export const MATCH_ORDER: IntentId[] = [
+  "about.cuore",
   "brew.how",
   "allergens",
   "caution.l",
@@ -29,6 +30,13 @@ export const MATCH_ORDER: IntentId[] = [
 ];
 
 export const INTENT_TERMS: Partial<Record<IntentId, Weighted[]>> = {
+  "about.cuore": [
+    ["apa itu cuore", 5], ["cuore itu apa", 5], ["apa sih cuore", 5], ["apa itu cup", 4], ["what is cuore", 5],
+    ["whats cuore", 5], ["what is a cuore", 5], ["whats a cuore", 5], ["about cuore", 4], ["tentang cuore", 4],
+    ["jelaskan cuore", 4], ["jelaskan tentang cuore", 5], ["explain cuore", 4], ["tell me about cuore", 5],
+    ["what is this product", 4], ["produk apa ini", 4], ["ini produk apa", 4], ["perkenalan", 3],
+    ["introduction", 3], ["cuore cup", 2],
+  ],
   "brew.how": [
     ["seduh", 3], ["nyeduh", 3], ["menyeduh", 3], ["diseduh", 3], ["seduhan", 3], ["brew", 3], ["brewing", 3], ["prepare", 3],
     ["preparing", 3], ["preparation", 3], ["siapkan", 3], ["menyiapkan", 3], ["penyajian", 3], ["saji", 2],

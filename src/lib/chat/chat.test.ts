@@ -191,6 +191,16 @@ describe("text matching", () => {
 
 /** [message, intent]. Each primary topic has 8 free-form questions, Indonesian and English, with misspellings. */
 const VARIATIONS: Record<string, string[]> = {
+  "about.cuore": [
+    "apa itu CUORE cup?",
+    "cuore itu apa sih",
+    "jelaskan tentang cuore",
+    "ini produk apa",
+    "what is a CUORE cup",
+    "whats cuore",
+    "tell me about cuore",
+    "what is cuoer cup", // misspelling
+  ],
   "brew.how": [
     "bagaimana cara menyeduhnya?",
     "berapa air panas yang dipakai",

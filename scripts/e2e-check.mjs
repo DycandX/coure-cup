@@ -302,6 +302,34 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
     check("no horizontal scroll on the home-page result", await noOverflow(homePage));
   }
 
+  // 10a2. "What is a CUORE cup?": panel on the home screen and a section on /about
+  {
+    const wp = await newPage();
+    await wp.goto(BASE);
+    await sleep(1200);
+    await click(wp, wp.getByRole("button", { name: "Start" }));
+    await click(wp, main(wp).getByRole("button", { name: /What is a CUORE cup/ }));
+    const wd = wp.getByRole("dialog", { name: "What is a CUORE cup?" });
+    t = await wd.innerText();
+    check("home: panel explains the cup, the portion and the three modules", /modular savoury instant porridge/.test(t) && /35 g/.test(t) && /20 g/.test(t) && /55 g/.test(t) && /S-CUP/.test(t) && /M-CUP/.test(t) && /L-CUP/.test(t), t.slice(0, 300));
+    check("home: panel says it is a food, not a medicine, and shows the estimate note", /food, not a medicine/.test(t) && /estimate/i.test(t));
+    check("home: panel has no horizontal scroll", await noOverflow(wp));
+    await click(wp, wd.getByRole("button", { name: "Check my priority" }));
+    await sleep(500);
+    check("home: panel button opens the screening", (await wd.count()) === 0 && /Data consent/.test(await main(wp).innerText()));
+
+    const ap = await newPage();
+    await ap.goto(`${BASE}/about`);
+    await sleep(1200);
+    t = await main(ap).innerText();
+    check("/about: has the What is a CUORE cup? section", /What is a CUORE cup\?/.test(t) && /Three modules/.test(t) && /How it works/.test(t), t.slice(0, 200));
+    check("/about: no horizontal scroll with the new section", await noOverflow(ap));
+    await click(ap, main(ap).getByRole("button", { name: "Check my priority" }));
+    await ap.waitForURL((u) => u.pathname === "/");
+    await sleep(900);
+    check("/about: section button opens the screening on the home page", /Data consent/.test(await main(ap).innerText()));
+  }
+
   // 10b. Chat (T-04, T-05): rule-based Q&A, emergency reply, claim guard, no network, nothing kept
   {
     const chatPage = await newPage();
@@ -320,8 +348,12 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
 
     check("floating chat button on the start page", (await chatPage.getByRole("button", { name: "Ask CUORE" }).count()) === 1);
     await click(chatPage, chatPage.getByRole("button", { name: "Ask CUORE" }));
-    check("chat opens as a dialog with the five quick topics", (await dlg.count()) === 1 && (await dlg.getByRole("group", { name: "Quick questions" }).getByRole("button").count()) === 5);
+    check("chat opens as a dialog with six quick topics, the first being what CUORE is", (await dlg.count()) === 1 && (await dlg.getByRole("group", { name: "Quick questions" }).getByRole("button").count()) === 6 && (await dlg.getByRole("button", { name: "What is a CUORE cup?" }).count()) === 1);
     check("no horizontal scroll with the chat open", await noOverflow(chatPage));
+
+    await click(chatPage, dlg.getByRole("button", { name: "What is a CUORE cup?" }));
+    t = await reply();
+    check("chip: what is a CUORE cup answers with the portion and the three modules", /modular savoury instant porridge/.test(t) && /One 55 g portion = 35 g Universal Base \+ one 20 g module/.test(t) && /S-CUP/.test(t) && /M-CUP/.test(t) && /L-CUP/.test(t), t.slice(0, 300));
 
     await click(chatPage, dlg.getByRole("button", { name: "How to prepare" }));
     t = await reply();
@@ -400,6 +432,7 @@ const noOverflow = async (page) => page.evaluate(() => document.documentElement.
     await click(idPage, idPage.getByRole("button", { name: /Ganti ke Bahasa Indonesia/ }));
     await click(idPage, idPage.getByRole("button", { name: "Tanya CUORE" }));
     const idDlg = idPage.getByRole("dialog", { name: "Tanya jawab produk" });
+    check("Indonesian: the first chip asks what a CUORE cup is", (await idDlg.getByRole("button", { name: "Apa itu CUORE cup?" }).count()) === 1);
     await click(idPage, idDlg.getByRole("button", { name: "Cara menyeduh" }));
     t = await idDlg.getByRole("log").innerText();
     check("Indonesian: chip answers in Indonesian", /Cara menyiapkan/.test(t) && /Tuang Universal Base/.test(t), t.slice(-200));

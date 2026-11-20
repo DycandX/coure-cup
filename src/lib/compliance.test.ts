@@ -14,6 +14,7 @@ import {
 } from "./recommender";
 import { COPY } from "./copy";
 import { buildModelCard } from "./model-card";
+import { buildAboutCuore } from "./about-cuore";
 import { FORBIDDEN, stripNegatedDisclaimer, strings } from "./compliance-rules";
 import {
   BASE_COMPOSITION,
@@ -59,6 +60,8 @@ const userFacingCopy = () => [
   ...strings(COPY),
   ...strings(buildModelCard("id")),
   ...strings(buildModelCard("en")),
+  ...strings(buildAboutCuore("id")),
+  ...strings(buildAboutCuore("en")),
 ];
 
 describe("language compliance", () => {

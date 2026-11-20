@@ -45,8 +45,8 @@ describe("knowledge base coverage", () => {
     for (const r of rendered) expect(r.text.trim().length, `${r.id}/${r.lang}/${r.module}`).toBeGreaterThan(20);
   });
 
-  it("covers the five topics the team asked for with primary chips", () => {
-    expect(PRIMARY_CHIPS).toEqual(["brew.how", "allergens", "who.can", "who.priority", "heart.symptoms"]);
+  it("offers what CUORE is, then the five topics the team asked for, as primary chips", () => {
+    expect(PRIMARY_CHIPS).toEqual(["about.cuore", "brew.how", "allergens", "who.can", "who.priority", "heart.symptoms"]);
     for (const id of PRIMARY_CHIPS) expect(KNOWLEDGE[id]).toBeDefined();
   });
 
