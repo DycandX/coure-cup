@@ -9,21 +9,29 @@ import type {
 import { computeBmi, meanBloodPressure } from "./safety";
 
 /**
- * Provisional scoring rules. Thresholds follow WHO as chosen by the team and
- * are DRAFTS pending confirmation by the supervising physician
- * (DECISIONS.md D-002, D-003). Lipid cut-offs are not set by WHO.
+ * Provisional scoring rules (DECISIONS.md D-005, D-006). Adopted on the owner's
+ * instruction from the team's answer sheet; the clinical numbers are still
+ * DRAFTS pending confirmation by the supervising physician (dr. Enny).
+ * Sources: WHO 2021 hypertension guideline; WHO Expert Consultation (Lancet
+ * 2004) Asian BMI action points; WHO 2011 / WHO-IASO-IOTF 2000 Asian waist;
+ * WHO/IDF 2006 glucose; NCEP ATP III lipid classes (WHO sets no lipid cut-offs).
  */
 export const THRESHOLDS = {
   /** Neutral minimum for the best module; below it no module is suggested. */
   minPriority: 0.25,
-  bp: { hypertension: [140, 90], highNormal: [130, 85] },
+  /** Hypertension only; no intermediate tier (WHO 2021 uses 130 only for high-risk patients). */
+  bp: { hypertension: [140, 90] },
   /** Asian-population waist circumference (WHO Expert Consultation 2011; WHO/IASO/IOTF 2000), DECISIONS D-005. */
   waistCm: { male: 90, female: 80 },
-  bmi: 25,
+  /** Asian public-health action points: 23.0-27.4 partial, 27.5+ full (WHO international cut-offs are 25 and 30). */
+  bmi: { asiaIncreased: 23, asiaHigh: 27.5 },
   glucose: { diabetesRange: 126, impairedFasting: 110 },
   ldl: { high: 160, borderline: 130, nearOptimal: 100 },
   triglycerides: { high: 200, borderline: 150 },
-  hdlLow: { male: 40, female: 50 },
+  /** NCEP ATP III: HDL below 40 mg/dL is low, for both sexes. */
+  hdlLow: 40,
+  /** Complaints may add at most this much to a module score and are never the only reason given. */
+  symptomWeightMax: 0.1,
 } as const;
 
 const clamp01 = (n: number) => Math.min(1, Math.max(0, n));
@@ -36,9 +44,7 @@ export function bloodPressureScore(input: ScreeningInput): number {
   const m = meanBloodPressure(input);
   if (!m) return 0; // optional input: absent means no contribution
   const T = THRESHOLDS.bp;
-  if (m.systolic >= T.hypertension[0] || m.diastolic >= T.hypertension[1]) return 1;
-  if (m.systolic >= T.highNormal[0] || m.diastolic >= T.highNormal[1]) return 0.4;
-  return 0;
+  return m.systolic >= T.hypertension[0] || m.diastolic >= T.hypertension[1] ? 1 : 0;
 }
 
 export function adiposityScore(input: ScreeningInput): number {
@@ -47,7 +53,10 @@ export function adiposityScore(input: ScreeningInput): number {
     parts.push(input.waistCm >= THRESHOLDS.waistCm[input.sex] ? 1 : 0);
   }
   const bmi = computeBmi(input.heightCm, input.weightKg);
-  if (bmi !== undefined) parts.push(bmi >= THRESHOLDS.bmi ? 1 : 0);
+  if (bmi !== undefined) {
+    const B = THRESHOLDS.bmi;
+    parts.push(bmi >= B.asiaHigh ? 1 : bmi >= B.asiaIncreased ? 0.5 : 0);
+  }
   return parts.length ? Math.max(...parts) : 0;
 }
 
@@ -60,7 +69,7 @@ export function lipidScore(input: ScreeningInput): number | null {
     parts.push(t.ldl >= T.ldl.high ? 1 : t.ldl >= T.ldl.borderline ? 0.7 : t.ldl >= T.ldl.nearOptimal ? 0.3 : 0);
   if (t.triglycerides !== undefined)
     parts.push(t.triglycerides >= T.triglycerides.high ? 1 : t.triglycerides >= T.triglycerides.borderline ? 0.7 : 0);
-  if (t.hdl !== undefined && input.sex) parts.push(t.hdl < T.hdlLow[input.sex] ? 0.7 : 0);
+  if (t.hdl !== undefined) parts.push(t.hdl < T.hdlLow ? 0.7 : 0);
   return parts.length ? Math.max(...parts) : null;
 }
 
@@ -89,10 +98,12 @@ export function scoreModules(input: ScreeningInput): ScoreDetail {
   const glu = glucoseScore(input);
 
   // Module S (sodium-conscious): salty diet, blood pressure, history, complaints.
+  // Complaints capped at 0.1 (high blood pressure often has no symptoms); the freed
+  // 0.1 went to the salty-diet item (agent's choice, D-006, pending dr. Enny).
   const salty = avg([hi(f.saltyPackaged), hi(f.instantNoodle), hi(f.addedSalt)]);
   const sHist = h.hypertension ? 1 : h.familyHypertensionStroke ? 0.5 : 0;
   const sSymp = avg([flag(s.headacheNeck), flag(s.dizziness)]);
-  const S = 0.35 * salty + 0.2 * bp + 0.25 * sHist + 0.2 * sSymp;
+  const S = 0.45 * salty + 0.2 * bp + 0.25 * sHist + THRESHOLDS.symptomWeightMax * sSymp;
 
   // Module L (lipid-oriented): Tier 1 infers from diet, waist/BMI and history; Tier 2 refines.
   // High cholesterol usually has no typical complaint, so no symptom term.
@@ -114,10 +125,10 @@ export function scoreModules(input: ScreeningInput): ScoreDetail {
 
   const factors: ScoreDetail["factors"] = {
     S: [
-      { code: "salty_foods", value: 0.35 * salty },
+      { code: "salty_foods", value: 0.45 * salty },
       { code: "blood_pressure", value: 0.2 * bp },
       { code: "hypertension_history", value: 0.25 * sHist },
-      { code: "sodium_symptoms", value: 0.2 * sSymp },
+      { code: "sodium_symptoms", value: THRESHOLDS.symptomWeightMax * sSymp },
     ],
     L: [
       { code: "fatty_foods", value: 0.3 * fatty * wL },
@@ -157,8 +168,14 @@ export function pickModule(scores: ModuleScores): ModuleId | null {
   return scores[best] >= THRESHOLDS.minPriority - eps ? best : null;
 }
 
+/** Complaint-based reasons: allowed next to another reason, never on their own. */
+const SYMPTOM_REASONS: ReadonlySet<ReasonCode> = new Set<ReasonCode>(["sodium_symptoms", "metabolic_symptoms"]);
+
 export function pickReasons(detail: ScoreDetail, module: ModuleId): ReasonCode[] {
   const sorted = [...detail.factors[module]].sort((a, b) => b.value - a.value);
   const ranked = sorted.filter((x) => x.value > 0.05).slice(0, 2).map((x) => x.code);
-  return ranked.length ? ranked : [sorted[0].code];
+  if (ranked.length && ranked.some((c) => !SYMPTOM_REASONS.has(c))) return ranked;
+  // Only complaints (or nothing) cleared the bar: lead with the strongest non-complaint factor.
+  const lead = sorted.find((x) => !SYMPTOM_REASONS.has(x.code))!.code;
+  return ranked.length ? [lead, ranked[0]] : [lead];
 }

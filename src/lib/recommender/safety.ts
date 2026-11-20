@@ -79,13 +79,13 @@ export function checkSafety(input: ScreeningInput): SafetyResult {
   ex.push(...checkSafetyAnswers(true, input.safety));
 
   // Missing key data. Blood pressure is optional, but a single reading is incomplete.
+  // Body size: waist circumference OR height + weight (BMI) is enough (essay Tier 1, D-006).
   const foodComplete = FOOD_KEYS.every((k) => input.food[k] !== undefined);
+  const hasBmi = input.heightCm !== undefined && input.weightKg !== undefined;
   if (
     input.age === undefined ||
     input.sex === undefined ||
-    input.heightCm === undefined ||
-    input.weightKg === undefined ||
-    input.waistCm === undefined ||
+    (input.waistCm === undefined && !hasBmi) ||
     !foodComplete ||
     (input.bloodPressure.length > 0 && input.bloodPressure.length < L.minBpReadings)
   ) {

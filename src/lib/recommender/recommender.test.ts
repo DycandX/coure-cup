@@ -10,7 +10,7 @@ import {
   type FoodFrequency,
   type ScreeningInput,
 } from "./index";
-import { bloodPressureScore, pickModule } from "./scoring";
+import { bloodPressureScore, pickModule, pickReasons } from "./scoring";
 import { DEMO_INPUT } from "../demo";
 
 /** "Sometimes" everywhere: nothing stands out. */
@@ -118,11 +118,14 @@ describe("safety rule layer", () => {
     it.each([
       ["age", { age: undefined }],
       ["sex", { sex: undefined }],
-      ["height", { heightCm: undefined }],
-      ["weight", { weightKg: undefined }],
-      ["waist", { waistCm: undefined }],
+      ["waist or height (no waist, no height)", { waistCm: undefined, heightCm: undefined }],
+      ["waist or weight (no waist, no weight)", { waistCm: undefined, weightKg: undefined }],
     ] as [string, Partial<ScreeningInput>][])("needs %s", (_n, over) => {
       expect(exclusionsOf(base(over))).toContain("missing_data");
+    });
+    it("body size: waist alone or height + weight alone is enough (essay Tier 1, D-006)", () => {
+      expect(exclusionsOf(base({ heightCm: undefined, weightKg: undefined }))).toEqual([]);
+      expect(exclusionsOf(base({ waistCm: undefined }))).toEqual([]);
     });
     it("needs all food-frequency answers", () => {
       const food: Partial<FoodFrequency> = { ...neutralFood };
@@ -185,9 +188,13 @@ describe("WHO-based draft thresholds", () => {
     expect(computeBmi(undefined, 70)).toBeUndefined();
   });
 
-  it("BMI >= 25 counts, 24.9 does not", () => {
-    expect(factor(base({ heightCm: 170, weightKg: 72 }), "M", "adiposity")).toBe(0);
-    expect(factor(base({ heightCm: 170, weightKg: 72.5 }), "M", "adiposity")).toBeGreaterThan(0);
+  it("BMI uses the Asian action points: <23 none, 23.0-27.4 half, 27.5+ full", () => {
+    // 200 cm makes BMI = weight / 4.
+    const adip = (kg: number) => factor(base({ heightCm: 200, weightKg: kg }), "M", "adiposity");
+    expect(adip(91.6)).toBe(0); // 22.9
+    expect(adip(92)).toBeCloseTo(0.125); // 23.0 -> 0.5 x weight 0.25
+    expect(adip(109.6)).toBeCloseTo(0.125); // 27.4
+    expect(adip(110)).toBeCloseTo(0.25); // 27.5 -> full
   });
 
   it("waist counts from 90 cm (male) and 80 cm (female)", () => {
@@ -197,12 +204,12 @@ describe("WHO-based draft thresholds", () => {
     expect(factor(base({ sex: "female", waistCm: 80 }), "M", "adiposity")).toBeGreaterThan(0);
   });
 
-  it("blood pressure: 140/90 full score, 130-139/85-89 partial, below none, absent none", () => {
+  it("blood pressure: 140/90 or above full score, no intermediate tier, absent none", () => {
     const bp = (s: number, d: number) => base({ bloodPressure: [{ systolic: s, diastolic: d }, { systolic: s, diastolic: d }] });
     expect(bloodPressureScore(bp(140, 80))).toBe(1);
     expect(bloodPressureScore(bp(120, 90))).toBe(1);
-    expect(bloodPressureScore(bp(138, 88))).toBe(0.4);
-    expect(bloodPressureScore(bp(129, 84))).toBe(0);
+    expect(bloodPressureScore(bp(139, 89))).toBe(0);
+    expect(bloodPressureScore(bp(138, 88))).toBe(0);
     expect(bloodPressureScore(base({ bloodPressure: [] }))).toBe(0);
   });
 
@@ -301,10 +308,41 @@ describe("module scoring", () => {
     expect(rec.kind === "module" && rec.reasons).toContain("glucose_value");
   });
 
-  it("low HDL is sex-specific", () => {
-    const m = scoreModules(base({ sex: "male", tier2: { hdl: 45 } }));
-    const f = scoreModules(base({ sex: "female", tier2: { hdl: 45 } }));
-    expect(f.scores.L).toBeGreaterThan(m.scores.L);
+  it("low HDL is below 40 mg/dL for both sexes (NCEP ATP III)", () => {
+    for (const sex of ["male", "female"] as const) {
+      const low = scoreModules(base({ sex, tier2: { hdl: 39 } }));
+      const ok = scoreModules(base({ sex, tier2: { hdl: 40 } }));
+      expect(low.scores.L, sex).toBeGreaterThan(ok.scores.L);
+    }
+    expect(scoreModules(base({ sex: "female", tier2: { hdl: 45 } })).scores.L).toBe(
+      scoreModules(base({ sex: "male", tier2: { hdl: 45 } })).scores.L,
+    );
+  });
+
+  it("complaints add at most 0.1 to module S", () => {
+    const all = base({ symptoms: { ...noSymptoms, headacheNeck: true, dizziness: true } });
+    expect(factor(all, "S", "sodium_symptoms")).toBeCloseTo(0.1);
+  });
+
+  it("complaints are never the only reason given", () => {
+    const detail = {
+      scores: { S: 0.3, L: 0, M: 0 },
+      factors: {
+        S: [
+          { code: "salty_foods" as const, value: 0.04 },
+          { code: "blood_pressure" as const, value: 0 },
+          { code: "hypertension_history" as const, value: 0 },
+          { code: "sodium_symptoms" as const, value: 0.1 },
+        ],
+        L: [],
+        M: [],
+      },
+      tier: 1 as const,
+      notices: [],
+    };
+    const reasons = pickReasons(detail, "S");
+    expect(reasons[0]).toBe("salty_foods");
+    expect(reasons).toContain("sodium_symptoms");
   });
 
   it("scores stay within 0..1 even for the worst profile", () => {
