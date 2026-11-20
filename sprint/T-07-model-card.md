@@ -1,7 +1,7 @@
 ---
 id: T-07
 title: Halaman model card singkat
-status: todo
+status: done
 estimate: S
 depends_on: []
 ---
@@ -16,6 +16,6 @@ Satu halaman (atau bagian di `/about`), ID dan EN, berisi: tujuan (prioritas for
 
 ## Kriteria selesai
 
-- [ ] Angka di halaman sama dengan `THRESHOLDS` dan `SAFETY_LIMITS` (dicek test).
-- [ ] Tidak ada klaim akurasi atau validasi yang belum dilakukan.
-- [ ] Build, test, dan e2e bersih.
+- [x] Angka di halaman sama dengan `THRESHOLDS` dan `SAFETY_LIMITS` (dicek test, `src/lib/model-card.test.ts`). Halaman: `/model`, isi di `src/lib/model-card.ts`, tautan dari `/about`.
+- [x] Tidak ada klaim akurasi atau validasi yang belum dilakukan (test menolak persentase dan kata "telah divalidasi").
+- [x] Build, test (127), dan e2e (33/33 di HP, tablet, desktop) bersih, 2026-11-21.
